@@ -1,0 +1,22 @@
+# Python dependencies
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database
+*.db
+*.sqlite3
+
+# OS related
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Backend specific
+backend/venv/
+backend/__pycache__/
+backend/sports.db

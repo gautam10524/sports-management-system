@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Soccer &mdash; Website by Colorlib</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="fonts/icomoon/style.css">
+
+  <link rel="stylesheet" href="css/bootstrap/bootstrap.css">
+  <link rel="stylesheet" href="css/jquery-ui.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
+
+  <link rel="stylesheet" href="css/jquery.fancybox.min.css">
+
+  <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+
+  <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+
+  <link rel="stylesheet" href="css/aos.css">
+
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .admin-hud {
+      margin-top: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-glass {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+    }
+
+    .muted {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .modal-backdrop.show {
+      opacity: 0.7;
+    }
+
+    .modal-content.modal-dark {
+      background: rgba(16, 22, 34, 0.96);
+      color: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+      border-radius: 14px;
+    }
+
+    .modal-content.modal-dark .modal-header,
+    .modal-content.modal-dark .modal-footer {
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+
+    .modal-content.modal-dark label {
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+    }
+
+    .modal-content.modal-dark .text-muted {
+      color: rgba(255, 255, 255, 0.65) !important;
+    }
+
+    .form-control,
+    .custom-select {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    select.form-control option,
+    select.custom-select option {
+      background-color: #101622;
+      color: rgba(255, 255, 255, 0.92);
+    }
+  </style>
+
+
+
+  <style>
+    body::after {
+      content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-image: linear-gradient(rgba(16, 22, 34, 0.82), rgba(16, 22, 34, 0.82)), url('images/field.jpg');
+      background-size: cover; background-position: center; background-attachment: fixed; z-index: -1;
+    }
+    .site-section, .bg-dark { background-color: transparent !important; }
+    
+    .match-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 30px;
+    }
+    .widget-vs {
+      background: transparent !important;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="site-wrap">
+
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icon-close2 js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+
+    <header class="site-navbar py-4 js-sticky-header" role="banner">
+
+      <div class="container">
+        <div class="d-flex align-items-center">
+          <div class="site-logo">
+            <a href="index.html">
+              <img src="images/logo.png" alt="Logo">
+            </a>
+          </div>
+          <div class="ml-auto">
+            <nav class="site-navigation position-relative text-right" role="navigation">
+              <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="main.html" class="nav-link">Teams</a></li>
+                <li><a href="players.html" class="nav-link">Players</a></li>
+                <li class="active"><a href="matches.html" class="nav-link">Matches</a></li>
+                <li><a href="blog.html" class="nav-link">Leaderboard</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+              </ul>
+            </nav>
+
+            <a href="#"
+              class="d-inline-block d-lg-none site-menu-toggle js-menu-toggle text-black float-right text-white"><span
+                class="icon-menu h3 text-white"></span></a>
+          </div>
+        </div>
+      </div>
+
+    </header>
+
+    <div class="hero overlay" style="background-image: url('images/bg_3.jpg'); padding-top: 100px; padding-bottom: 50px;">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-9 mx-auto text-center">
+            <h1 class="text-white">Matches & Results</h1>
+            <p>Schedule your match, verify the results and look out for more.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="container admin-hud">
+      <div class="d-flex align-items-center justify-content-between flex-wrap" style="gap: 1rem;">
+        <div>
+          <h2 class="text-white mb-1">Fixtures</h2>
+          <div class="muted">Upcoming matches, results, and winner announcements.</div>
+        </div>
+        <div class="d-flex align-items-center" style="gap:.5rem; flex-wrap:wrap;">
+          <input type="text" id="matchSearch" class="form-control form-control-sm" placeholder="Search matches..." style="max-width: 200px; border-radius: 8px;">
+          <div class="d-flex" style="gap: .5rem;">
+            <button class="btn btn-primary admin-only" id="openCreateMatchBtn">Schedule New Match</button>
+          </div>
+        </div>
+      </div>
+      <div id="alertArea" class="mt-3"></div>
+    </div>
+
+    <div class="container mt-5">
+      <!-- Ongoing Matches -->
+      <div class="row mb-5">
+        <div class="col-12 title-section">
+          <h2 class="heading">Ongoing / Featured Match</h2>
+        </div>
+        <div class="col-12" id="ongoingMatchesContainer"></div>
+      </div>
+
+      <!-- Upcoming Matches -->
+      <div class="row mb-5">
+        <div class="col-12 title-section">
+          <h2 class="heading">Upcoming Matches</h2>
+        </div>
+        <div class="col-12" id="upcomingMatchesContainer">
+          <div class="row" id="upcomingMatchesRows"></div>
+        </div>
+      </div>
+
+      <!-- Match History -->
+      <div class="row mb-5">
+        <div class="col-12 title-section">
+          <h2 class="heading">Match History</h2>
+        </div>
+        <div class="col-12" id="matchHistoryContainer">
+          <div class="row" id="matchHistoryRows"></div>
+        </div>
+      </div>
+      
+      <!-- Awards & Winners -->
+      <div class="row mb-5">
+        <div class="col-12 title-section">
+          <h2 class="heading">Awards and Winners (Top Teams)</h2>
+        </div>
+        <div class="col-12" id="awardsContainer">
+          <div class="row" id="awardsRows"></div>
+        </div>
+      </div>
+    </div>  </div>
+
+
+
+    <footer class="footer-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Quick Links</h3>
+              <ul class="list-unstyled links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="main.html">Teams</a></li>
+                <li><a href="players.html">Players</a></li>
+                <li><a href="matches.html">Matches</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Sports</h3>
+              <ul class="list-unstyled links">
+                <li><a href="blog.html">Leaderboard</a></li>
+                <li><a href="matches.html">Fixtures</a></li>
+                <li><a href="players.html">Player Stats</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Management</h3>
+              <ul class="list-unstyled links">
+                <li><a href="main.html">Create Team</a></li>
+                <li><a href="players.html">Add Player</a></li>
+                <li><a href="matches.html">Schedule Match</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Contact</h3>
+              <ul class="list-unstyled links">
+                <li><a href="contact.html">Get in Touch</a></li>
+                <li><a href="#">support@sportsms.com</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row text-center">
+          <div class="col-md-12">
+            <div class="pt-5">
+              <p>Copyright &copy; <script>document.write(new Date().getFullYear());</script> Sports Management System. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
+
+  </div>
+  <!-- .site-wrap -->
+
+  <div class="modal fade" id="matchModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content modal-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Schedule Match</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Sport</label>
+            <select id="sportSelect" class="form-control custom-select"></select>
+          </div>
+          <div class="form-group">
+            <label id="label1">Team 1</label>
+            <select id="team1Select" class="form-control custom-select"></select>
+          </div>
+          <div class="form-group">
+            <label id="label2">Team 2</label>
+            <select id="team2Select" class="form-control custom-select"></select>
+          </div>
+          <div class="form-group row">
+            <div class="col-6">
+              <label>Date</label>
+              <input type="date" id="matchDate" class="form-control" />
+            </div>
+            <div class="col-6">
+              <label>Time</label>
+              <input type="time" id="matchTime" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" id="matchLocation" class="form-control" placeholder="e.g. Main Stadium" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveMatchBtn">Schedule</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/jquery-migrate-3.0.1.min.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/jquery.stellar.min.js"></script>
+  <script src="js/jquery.countdown.min.js"></script>
+  <script src="js/bootstrap-datepicker.min.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/aos.js"></script>
+  <script src="js/jquery.fancybox.min.js"></script>
+  <script src="js/jquery.sticky.js"></script>
+  <script src="js/jquery.mb.YTPlayer.min.js"></script>
+
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let state = { teams: [], players: [], matches: [], teamsById: {}, playersByTeam: {} };
+
+    function escapeHtml(value) {
+      const s = String(value ?? "");
+      return s
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showAlert(type, message) {
+      const el = document.getElementById("alertArea");
+      el.innerHTML = `<div class="alert alert-${type} mb-0" role="alert" style="border-radius:14px;">${escapeHtml(message)}</div>`;
+      window.setTimeout(() => { if (el.innerHTML.includes(message)) el.innerHTML = ""; }, 3500);
+    }
+
+    async function apiFetch(path, options) {
+      const res = await fetch(API + path, options);
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(txt || `Request failed: ${res.status}`);
+      }
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) return res.json();
+      return null;
+    }
+
+    function parseMatchDate(value) {
+      if (!value) return null;
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return null;
+      return d;
+    }
+
+    function formatDate(value) {
+      const d = parseMatchDate(value);
+      if (!d) return String(value ?? "");
+      return d.toLocaleDateString();
+    }
+
+    function formatTime(value) {
+      const d = parseMatchDate(value);
+      if (!d) return "";
+      return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function teamName(id) {
+      return state.teamsById[String(id)]?.name ?? id;
+    }
+
+    function teamSport(id) {
+      return state.teamsById[String(id)]?.sport ?? "";
+    }
+
+    function buildPlayersByTeam() {
+      state.playersByTeam = {};
+      state.players.forEach(p => {
+        const tid = String(p.team_id ?? "");
+        if (!tid) return;
+        if (!state.playersByTeam[tid]) state.playersByTeam[tid] = [];
+        state.playersByTeam[tid].push(p);
+      });
+    }
+
+    function getDisplayNameForTeam(teamId) {
+      if (!teamId) return "-";
+      const team = state.teamsById[String(teamId)];
+      if (!team) return "Unknown Team";
+      
+      const sport = (team.sport || "").toLowerCase();
+      if (sport.includes("tennis") || sport.includes("badminton") || sport.includes("table")) {
+        const players = state.playersByTeam[String(teamId)];
+        if (players && players.length > 0) {
+          return players[0].name; 
+        }
+      }
+      return team.name;
+    }
+
+    function renderMatchRowUI(m, isHistory=false) {
+      const t1 = escapeHtml(getDisplayNameForTeam(m.team1_id));
+      const t2 = escapeHtml(getDisplayNameForTeam(m.team2_id));
+      const sport = escapeHtml(teamSport(m.team1_id) || teamSport(m.team2_id) || m.sport || "-");
+      const venue = escapeHtml(m.location ?? "TBD");
+      
+      let scoreText = "";
+      if (isHistory || m.winner) {
+         scoreText = `<span class="badge-soft mt-3" style="font-size:1.2rem; font-weight:bold;">Score: ${m.score_team1 || 0} - ${m.score_team2 || 0}</span>`;
+      }
+      
+      let winnerText = "";
+      if (m.winner) {
+        let winName = getDisplayNameForTeam(m.winner);
+        winnerText = `<div class="mt-2 text-success" style="font-weight:bold;">Winner: ${escapeHtml(winName)}</div>`;
+      } else if (isHistory) {
+        winnerText = `<div class="mt-2 text-warning" style="font-weight:bold;">Draw/Pending</div>`;
+      }
+
+      return `
+        <div class="col-lg-6 mb-4">
+          <div class="match-card">
+            <div class="widget-vs">
+              <div class="d-flex align-items-center justify-content-around justify-content-between w-100">
+                <div class="team-1 text-center" style="width: 40%;">
+                  <img src="images/logo_1.png" alt="Image" style="width: 60px;">
+                  <h3 class="mt-2 text-white" style="font-size:1.2rem;">${t1}</h3>
+                </div>
+                <div><span class="vs"><span>VS</span></span></div>
+                <div class="team-2 text-center" style="width: 40%;">
+                  <img src="images/logo_2.png" alt="Image" style="width: 60px;">
+                  <h3 class="mt-2 text-white" style="font-size:1.2rem;">${t2}</h3>
+                </div>
+              </div>
+            </div>
+            <div class="text-center widget-vs-contents mt-3 mb-0">
+              <h4 class="text-white">${sport}</h4>
+              <p class="mb-0 text-white-50">
+                <span class="d-block">${escapeHtml(formatDate(m.match_date))} • ${escapeHtml(formatTime(m.match_date))}</span>
+                <strong class="text-primary">${venue}</strong>
+              </p>
+              ${scoreText}
+              ${winnerText}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadData() {
+      // Use global helpers from api.js which respect the sport filter
+      const teams = await getTeams();
+      const players = await getPlayers();
+      const matches = await getMatches();
+      
+      state.teams = Array.isArray(teams) ? teams : [];
+      state.players = Array.isArray(players) ? players : [];
+      state.matches = Array.isArray(matches) ? matches : [];
+      state.teamsById = {};
+      state.teams.forEach(t => { state.teamsById[String(t.id)] = t; });
+      buildPlayersByTeam();
+    }
+
+    function renderMatches() {
+      const filterText = (document.getElementById("matchSearch")?.value || "").toLowerCase();
+      
+      const filteredMatches = state.matches.filter(m => {
+        const t1 = getDisplayNameForTeam(m.team1_id).toLowerCase();
+        const t2 = getDisplayNameForTeam(m.team2_id).toLowerCase();
+        const s = (teamSport(m.team1_id) || m.sport || "").toLowerCase();
+        return t1.includes(filterText) || t2.includes(filterText) || s.includes(filterText);
+      });
+
+      const now = new Date().getTime();
+      const sorted = [...filteredMatches].sort((a, b) => (parseMatchDate(a.match_date)?.getTime() ?? 0) - (parseMatchDate(b.match_date)?.getTime() ?? 0));
+      
+      const upcoming = sorted.filter(m => !m.winner && (parseMatchDate(m.match_date)?.getTime() ?? 0) > now);
+      const history = sorted.filter(m => m.winner || (parseMatchDate(m.match_date)?.getTime() ?? 0) <= now).reverse();
+      const ongoing = (upcoming.length > 0 && Math.abs((parseMatchDate(upcoming[0].match_date)?.getTime() || now) - now) < 86400000) ? [upcoming[0]] : 
+                      (history.length > 0 && !history[0].winner ? [history[0]] : []);
+      
+      // Render Ongoing / Featured (just pick the closest match to now without a winner)
+      const ongoingEl = document.getElementById("ongoingMatchesContainer");
+      if (ongoingEl) {
+         if (ongoing.length === 0) {
+           ongoingEl.innerHTML = `<div class="match-card text-center"><h4 class="text-white">No ongoing matches</h4></div>`;
+         } else {
+           ongoingEl.innerHTML = `<div class="row">${ongoing.map(m => renderMatchRowUI(m)).join("")}</div>`;
+         }
+      }
+
+      // Render Upcoming Matches
+      const upcomingEl = document.getElementById("upcomingMatchesRows");
+      if (upcomingEl) {
+         if (upcoming.length === 0) {
+           upcomingEl.innerHTML = `<div class="col-12"><div class="match-card text-center text-white-50">No upcoming matches scheduled.</div></div>`;
+         } else {
+           upcomingEl.innerHTML = upcoming.filter(m => !ongoing.includes(m)).map(m => renderMatchRowUI(m)).join("");
+         }
+      }
+
+      // Render Match History
+      const historyEl = document.getElementById("matchHistoryRows");
+      if (historyEl) {
+         if (history.length === 0) {
+           historyEl.innerHTML = `<div class="col-12"><div class="match-card text-center text-white-50">No past matches recorded.</div></div>`;
+         } else {
+           historyEl.innerHTML = history.filter(m => !ongoing.includes(m)).map(m => renderMatchRowUI(m, true)).join("");
+         }
+      }
+
+      // Awards
+      renderAwards();
+    }
+
+    function renderAwards() {
+      const awardsEl = document.getElementById("awardsRows");
+      if (!awardsEl) return;
+      
+      const sportPoints = {};
+      state.matches.forEach(m => {
+        if (m.winner) {
+          const s = (teamSport(m.team1_id) || m.sport || "Unknown").toLowerCase();
+          if (!sportPoints[s]) sportPoints[s] = {};
+          sportPoints[s][m.winner] = (sportPoints[s][m.winner] || 0) + 3;
+        }
+      });
+
+      let awardsHtml = "";
+      for (const sport of Object.keys(sportPoints)) {
+         let topTeamId = null;
+         let maxPts = -1;
+         for (const [tid, pts] of Object.entries(sportPoints[sport])) {
+           if (pts > maxPts) { maxPts = pts; topTeamId = tid; }
+         }
+         
+         if (topTeamId) {
+            const teamName = escapeHtml(getDisplayNameForTeam(topTeamId));
+            awardsHtml += `
+              <div class="col-lg-4 mb-4">
+                <div class="match-card text-center">
+                  <div class="text-warning mb-2" style="font-size:2rem;">🏆</div>
+                  <h4 class="text-white">${teamName}</h4>
+                  <p class="text-white-50 mb-0">${escapeHtml(sport.charAt(0).toUpperCase() + sport.slice(1))} Champion</p>
+                  <p class="text-primary font-weight-bold mb-0">${maxPts} pts</p>
+                </div>
+              </div>
+            `;
+         }
+      }
+
+      if (!awardsHtml) awardsHtml = `<div class="col-12"><div class="match-card text-center text-white-50">No awards determined yet.</div></div>`;
+      awardsEl.innerHTML = awardsHtml;
+    }
+
+    // Constraints when scheduling matches:
+    // - teams must be different
+    // - teams should be same sport
+    // - teams cannot have two matches at same exact datetime (simple overlap check)
+    function hasTeamConflict(teamId, matchDate) {
+      const t = String(teamId);
+      const time = parseMatchDate(matchDate)?.getTime();
+      if (!time) return false;
+      return state.matches.some(m => {
+        const mt = parseMatchDate(m.match_date)?.getTime();
+        if (!mt) return false;
+        if (mt !== time) return false;
+        return String(m.team1_id) === t || String(m.team2_id) === t;
+      });
+    }
+
+    async function refresh() {
+      try {
+        await loadData();
+        renderMatches();
+      } catch (e) {
+        showAlert("danger", `Failed to load matches. ${e?.message || ""}`.trim());
+      }
+    }
+
+    function isIndividualSport(sport) {
+      const s = (sport || "").toLowerCase();
+      return s.includes("tennis") || s.includes("badminton") || s.includes("table");
+    }
+
+    function openCreateMatch() {
+      $("#matchModal").modal("show");
+      
+      const sportSelect = document.getElementById("sportSelect");
+      const select1 = document.getElementById("team1Select");
+      const select2 = document.getElementById("team2Select");
+      const label1 = document.getElementById("label1");
+      const label2 = document.getElementById("label2");
+      
+      // Get unique sports
+      const sports = [...new Set(state.teams.map(t => (t.sport || "Other").toLowerCase()))];
+      sportSelect.innerHTML = `<option value="" selected disabled>Select sport</option>` + 
+        sports.map(s => `<option value="${s}">${escapeHtml(s.charAt(0).toUpperCase() + s.slice(1))}</option>`).join("");
+      
+      select1.innerHTML = `<option value="" selected disabled>Select sport first</option>`;
+      select2.innerHTML = `<option value="" selected disabled>Select sport first</option>`;
+      
+      sportSelect.onchange = function() {
+        const sport = sportSelect.value;
+        const individual = isIndividualSport(sport);
+        
+        label1.innerText = individual ? "Player 1" : "Team 1";
+        label2.innerText = individual ? "Player 2" : "Team 2";
+        
+        if (individual) {
+          // Show players for this sport
+          const teamIds = state.teams.filter(t => (t.sport || "").toLowerCase() === sport).map(t => String(t.id));
+          const relevantPlayers = state.players.filter(p => teamIds.includes(String(p.team_id)));
+          const playerOpts = `<option value="" selected disabled>Select player</option>` + 
+            relevantPlayers.map(p => {
+              const tName = state.teamsById[String(p.team_id)]?.name || "";
+              return `<option value="${p.team_id}" data-player="${escapeHtml(p.name)}">${escapeHtml(p.name)} (${escapeHtml(tName)})</option>`;
+            }).join("");
+          select1.innerHTML = playerOpts;
+          select2.innerHTML = playerOpts;
+        } else {
+          const teamOpts = `<option value="" selected disabled>Select team</option>` + 
+            state.teams.filter(t => (t.sport || "").toLowerCase() === sport)
+            .map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join("");
+          select1.innerHTML = teamOpts;
+          select2.innerHTML = teamOpts;
+        }
+      };
+    }
+
+    async function saveMatch() {
+      const team1_id = document.getElementById("team1Select").value;
+      const team2_id = document.getElementById("team2Select").value;
+      const match_date = document.getElementById("matchDate").value;
+      const param_time = document.getElementById("matchTime").value;
+      const location = document.getElementById("matchLocation").value;
+
+      if (!team1_id || !team2_id || !match_date || !param_time || !location) {
+         showAlert("warning", "All fields are required.");
+         return;
+      }
+      if (team1_id === team2_id) {
+         showAlert("warning", "Teams must be different.");
+         return;
+      }
+
+      const dt = `${match_date}T${param_time}:00`;
+
+      if (hasTeamConflict(team1_id, dt) || hasTeamConflict(team2_id, dt)) {
+         showAlert("warning", "One of the teams already has a match at this time.");
+         return;
+      }
+
+      const btn = document.getElementById("saveMatchBtn");
+      btn.disabled = true;
+      try {
+        await apiFetch("/matches/", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ team1_id, team2_id, match_date: dt, location })
+        });
+        showAlert("success", "Match scheduled!");
+        $("#matchModal").modal("hide");
+        await refresh();
+      } catch (e) {
+        showAlert("danger", `Failed: ${e.message}`);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById("openCreateMatchBtn")?.addEventListener("click", openCreateMatch);
+    document.getElementById("saveMatchBtn")?.addEventListener("click", saveMatch);
+    document.getElementById("matchSearch")?.addEventListener("input", renderMatches);
+
+    refresh();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+# Virtual Environments
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+
+# Databases
+*.db
+*.sqlite3
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# VS Code / IDEs
+.vscode/
+.idea/
+
+# Local Environment / Sensitive
+.env
+localStorage_backup.json

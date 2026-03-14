@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>User Dashboard | Sports Management System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap/bootstrap.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body::after {
+      content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-image: linear-gradient(rgba(16, 22, 34, 0.82), rgba(16, 22, 34, 0.82)), url('images/field.jpg');
+      background-size: cover; background-position: center; background-attachment: fixed; z-index: -1;
+    }
+    .page-wrapper { padding-top: 7rem; padding-bottom: 3rem; color: white; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .profile-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; }
+    .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: #ee1e46; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; border: 4px solid rgba(255,255,255,0.1); }
+    .stat-box { text-align: center; border-right: 1px solid rgba(255,255,255,0.1); }
+    .stat-box:last-child { border-right: none; }
+    .stat-value { font-size: 1.5rem; font-weight: bold; }
+    .stat-label { font-size: 0.8rem; opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <div class="site-wrap">
+    <header class="site-navbar py-4 js-sticky-header" role="banner">
+      <div class="container">
+        <div class="d-flex align-items-center">
+          <div class="site-logo"><a href="user.html"><img src="images/logo.png" alt="Logo"></a></div>
+          <div class="ml-auto">
+            <nav class="site-navigation position-relative text-right" role="navigation">
+              <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+                <!-- Navigation will be injected by main.js -->
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container page-wrapper">
+      <div class="profile-header">
+        <div id="userAvatar" class="profile-avatar"></div>
+        <div>
+          <h1 id="userName" class="mb-1">Loading...</h1>
+          <p id="userSportLabel" class="mb-0 text-danger font-weight-bold"></p>
+          <small id="userEmail" class="opacity-70"></small>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Personal Info & Stats -->
+        <div class="col-lg-4">
+          <div class="glass-card">
+            <h4>Personal Info</h4>
+            <hr style="border-color: rgba(255,255,255,0.1)">
+            <p><strong>Age:</strong> <span id="userAge">-</span></p>
+            <p><strong>DOB:</strong> <span id="userDob">-</span></p>
+            <p><strong>Sport:</strong> <span id="userSport">-</span></p>
+            <p><strong>Rating:</strong> <span class="text-warning">★★★★☆ (4.5)</span></p>
+          </div>
+          <div class="glass-card">
+            <h4>My Sport Stats</h4>
+            <div class="row mt-3">
+              <div class="col-6 stat-box">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Matches</div>
+              </div>
+              <div class="col-6 stat-box">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Wins</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Matches & Team -->
+        <div class="col-lg-8">
+          <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4>Scheduled Matches</h4>
+              <a href="matches.html" class="btn btn-sm btn-outline-danger">View All Matches</a>
+            </div>
+            <div id="userMatches">Loading...</div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="glass-card">
+                <h4>My Team Members</h4>
+                <p id="teamCoachLabel" class="text-danger small mb-2"></p>
+                <div id="teamMembers" class="small">Loading...</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="glass-card">
+                <h4>Leaderboard Ranking</h4>
+                <div id="userRanking">Loading...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    async function loadUserDashboard() {
+        const userId = localStorage.getItem('user_id');
+        const userSport = localStorage.getItem('user_sport');
+        
+        try {
+            const user = await apiFetch("/users/" + userId);
+            document.getElementById('userName').innerText = user.name;
+            document.getElementById('userAvatar').innerText = user.name.charAt(0).toUpperCase();
+            document.getElementById('userEmail').innerText = user.email;
+            document.getElementById('userAge').innerText = user.age || "-";
+            document.getElementById('userDob').innerText = user.dob || "-";
+            document.getElementById('userSport').innerText = user.sport || "-";
+            document.getElementById('userSportLabel').innerText = (user.sport || "All") + " Player";
+
+            // Load Teams for mapping IDs to Names
+            const teams = await getTeams();
+            const teamsMap = {};
+            teams.forEach(t => teamsMap[t.id] = t.name);
+
+            // Load Matches for this sport
+            const matches = await getMatches();
+            let matchesHtml = "";
+            if (matches.length > 0) {
+                matches.forEach(m => {
+                    const team1 = teamsMap[m.team1_id] || "Team " + m.team1_id;
+                    const team2 = teamsMap[m.team2_id] || "Team " + m.team2_id;
+                    matchesHtml += `
+                        <div class="p-2 mb-2" style="background:rgba(255,255,255,0.05); border-radius:8px;">
+                            <div class="d-flex justify-content-between">
+                                <span><strong>${team1} vs ${team2}</strong></span>
+                                <span class="text-danger">${m.match_date}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                matchesHtml = "<p class='opacity-50'>No scheduled matches for your sport.</p>";
+            }
+            document.getElementById('userMatches').innerHTML = matchesHtml;
+
+            // Load Team Info
+            const players = await getPlayers();
+            // In a real app, we'd know the player's team ID. For now, let's find a team of the same sport.
+            const myTeam = teams.find(t => t.sport === userSport) || teams[0];
+            if (myTeam) {
+                document.getElementById('teamCoachLabel').innerText = "Coach: " + (myTeam.coach || "Assigned Coach");
+                const members = players.filter(p => p.team_id === myTeam.id);
+                document.getElementById('teamMembers').innerHTML = members.map(m => `<div>• ${m.name} (${m.position || 'Member'})</div>`).join("");
+            } else {
+                document.getElementById('teamMembers').innerHTML = "No team assigned yet.";
+            }
+
+            // Load Leaderboard
+            const leaderboard = await getLeaderboard();
+            let rankHtml = "<table class='table table-sm text-white'>";
+            leaderboard.slice(0, 5).forEach((item, idx) => {
+                rankHtml += `<tr><td>${idx+1}</td><td>${item.team_name}</td><td>${item.points} pts</td></tr>`;
+            });
+            rankHtml += "</table>";
+            document.getElementById('userRanking').innerHTML = rankHtml;
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function apiFetch(path) {
+        const res = await fetch(API + path);
+        return res.json();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadUserDashboard);
+  </script>
+</body>
+</html>

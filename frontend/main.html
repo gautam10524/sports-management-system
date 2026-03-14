@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Teams | Sports Management System</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap/bootstrap.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(8, 14, 24, 0.80) 0%, rgba(8, 14, 24, 0.92) 100%),
+        url('images/field.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .teams-shell {
+      padding-top: 7rem;
+      padding-bottom: 3rem;
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .page-title h1 {
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: #fff;
+    }
+
+    .card-glass {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+    }
+
+    .card-glass .card-header {
+      background: rgba(0, 0, 0, 0.10);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .muted {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .table-darkish {
+      color: #fff;
+    }
+
+    .table-darkish thead th {
+      border-top: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .table-darkish td,
+    .table-darkish th {
+      border-color: rgba(255, 255, 255, 0.08);
+      vertical-align: middle;
+    }
+
+    .badge-soft {
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.92);
+      font-weight: 600;
+      padding: 0.35rem 0.55rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .avatar-stack {
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+      margin-left: -10px;
+    }
+
+    .avatar:first-child {
+      margin-left: 0;
+    }
+
+    .avatar.more {
+      background: rgba(13, 110, 253, 0.28);
+      border-color: rgba(13, 110, 253, 0.40);
+    }
+
+    .form-control,
+    .custom-select {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    /* Native select dropdown options (best-effort across browsers) */
+    select.form-control,
+    select.custom-select {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    select.form-control option,
+    select.custom-select option {
+      background-color: #101622;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    select.form-control option:disabled,
+    select.custom-select option:disabled {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.10);
+      border-color: rgba(13, 110, 253, 0.55);
+      color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .alert-area {
+      min-height: 44px;
+    }
+
+    /* Modals: make content readable on dark UI */
+    .modal-backdrop.show {
+      opacity: 0.7;
+    }
+
+    .modal-content.modal-dark {
+      background: rgba(16, 22, 34, 0.96);
+      color: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+    }
+
+    .modal-content.modal-dark .modal-header,
+    .modal-content.modal-dark .modal-footer {
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+
+    .modal-content.modal-dark .close {
+      color: rgba(255, 255, 255, 0.85);
+      text-shadow: none;
+      opacity: 0.9;
+    }
+
+    .modal-content.modal-dark label {
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+    }
+
+    .modal-content.modal-dark .text-muted {
+      color: rgba(255, 255, 255, 0.65) !important;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 575px) {
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    body::after {
+      content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-image: linear-gradient(rgba(16, 22, 34, 0.82), rgba(16, 22, 34, 0.82)), url('images/field.jpg');
+      background-size: cover; background-position: center; background-attachment: fixed; z-index: -1;
+    }
+    .site-section, .bg-dark { background-color: transparent !important; }
+  </style>
+</head>
+
+<body>
+  <div class="site-wrap">
+    <header class="site-navbar py-4 js-sticky-header" role="banner">
+      <div class="container">
+        <div class="d-flex align-items-center">
+          <div class="site-logo">
+            <a href="index.html">
+              <img src="images/logo.png" alt="Logo">
+            </a>
+          </div>
+          <div class="ml-auto">
+            <nav class="site-navigation position-relative text-right" role="navigation">
+              <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li class="active"><a href="main.html" class="nav-link">Teams</a></li>
+                <li><a href="players.html" class="nav-link">Players</a></li>
+                <li><a href="matches.html" class="nav-link">Matches</a></li>
+                <li><a href="blog.html" class="nav-link">Leaderboard</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+              </ul>
+            </nav>
+            <a href="#"
+              class="d-inline-block d-lg-none site-menu-toggle js-menu-toggle text-black float-right text-white">
+              <span class="icon-menu h3 text-white"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container teams-shell">
+      <div class="page-title">
+        <div>
+          <h1>Teams</h1>
+          <div class="muted">Create, view, and manage teams in one place.</div>
+        </div>
+          <button id="openCreateBtn" class="btn btn-primary btn-icon admin-only">
+            <span aria-hidden="true">+</span>
+            New Team
+          </button>
+      </div>
+
+      <div id="alertArea" class="alert-area"></div>
+
+      <div class="card card-glass mb-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div>Teams list</div>
+          <div class="muted" id="teamsCount">0 teams</div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-darkish mb-0">
+              <thead>
+                <tr>
+                  <th style="width: 50px;"></th>
+                  <th>Name</th>
+                  <th style="width: 140px;">Players</th>
+                  <th style="width: 170px;">Sport</th>
+                  <th style="width: 110px;">Points</th>
+                  <th style="width: 170px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="teamsTable">
+                <tr>
+                  <td colspan="6" class="p-4 muted">Loading…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div class="modal fade" id="teamModal" tabindex="-1" role="dialog" aria-labelledby="teamModalTitle"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modal-dark" style="border-radius: 14px;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="teamModalTitle">New Team</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="teamForm">
+              <input type="hidden" id="teamId">
+              <div class="form-group">
+                <label for="teamName" class="mb-1">Team name</label>
+                <input id="teamName" class="form-control" placeholder="e.g., Thunder FC" required>
+                <small class="form-text text-muted">Required.</small>
+              </div>
+              <div class="field-row">
+                <div class="form-group">
+                  <label for="teamCoach" class="mb-1">Coach</label>
+                  <input id="teamCoach" class="form-control" placeholder="e.g., Alex Morgan" required>
+                  <small class="form-text text-muted">Required.</small>
+                </div>
+                <div class="form-group">
+                  <label for="teamSport" class="mb-1">Sport</label>
+                  <select id="teamSport" class="form-control custom-select" required>
+                    <option value="" selected disabled>Select sport</option>
+                    <option value="football">Football</option>
+                    <option value="basketball">Basketball</option>
+                    <option value="cricket">Cricket</option>
+                    <option value="soccer">Soccer</option>
+                    <option value="badminton">Badminton</option>
+                    <option value="tennis">Tennis</option>
+                    <option value="rugby">Rugby</option>
+                    <option value="volleyball">Volleyball</option>
+                  </select>
+                  <small class="form-text text-muted">Required.</small>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button id="saveTeamBtn" type="button" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete confirm Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalTitle"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modal-dark" style="border-radius: 14px;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalTitle">Confirm delete</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="confirmText">Delete this team?</div>
+            <div class="text-muted mt-2" style="font-size: .92rem;">
+              This will remove the team. Players/matches behavior depends on your backend rules.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button id="confirmDeleteBtn" type="button" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Details Modal -->
+    <div class="modal fade" id="teamDetailsModal" tabindex="-1" role="dialog" aria-labelledby="teamDetailsTitle"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content modal-dark" style="border-radius: 14px;">
+          <div class="modal-header">
+            <div>
+              <h5 class="modal-title" id="teamDetailsTitle">Team details</h5>
+              <div class="text-muted" style="font-size:.9rem;" id="detailsTeamName">-</div>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="detailsTeamId">
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="card card-glass">
+                  <div class="card-header">Overview</div>
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between py-1">
+                      <div class="text-muted">Coach</div>
+                      <div id="detailsCoach">-</div>
+                    </div>
+                    <div class="d-flex justify-content-between py-1">
+                      <div class="text-muted">Sport</div>
+                      <div id="detailsSport">-</div>
+                    </div>
+                    <div class="d-flex justify-content-between py-1">
+                      <div class="text-muted">Points</div>
+                      <div id="detailsPoints">0</div>
+                    </div>
+                    <div class="d-flex justify-content-between py-1">
+                      <div class="text-muted">Roster</div>
+                      <div id="detailsRoster">0 / 0</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3 admin-only">
+                <div class="card card-glass">
+                  <div class="card-header">Add player to team</div>
+                  <div class="card-body">
+                    <div class="form-group mb-2">
+                      <label class="mb-1" for="assignPlayerSelectEl">Player</label>
+                      <select id="assignPlayerSelectEl" class="form-control custom-select">
+                        <option value="" selected disabled>Loading…</option>
+                      </select>
+                    </div>
+                    <button id="assignPlayerBtn" class="btn btn-primary btn-sm" type="button"
+                      onclick="assignPlayerToTeam()">
+                      Add
+                    </button>
+                    <div class="text-muted mt-2" style="font-size:.9rem;">
+                      Constraint: roster size is limited by sport rules.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="card card-glass">
+                  <div class="card-header">Players</div>
+                  <div class="card-body" id="detailsPlayersList">
+                    <div class="text-muted">Loading…</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="card card-glass">
+                  <div class="card-header">Upcoming matches</div>
+                  <div class="card-body" id="detailsUpcomingMatches">
+                    <div class="text-muted">Loading…</div>
+                  </div>
+                </div>
+                <div class="card card-glass mt-3">
+                  <div class="card-header">Match history</div>
+                  <div class="card-body" id="detailsMatchHistory">
+                    <div class="text-muted">Loading…</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.sticky.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let state = {
+      teams: [],
+      players: [],
+      leaderboard: [],
+      matches: [],
+    };
+
+    const SPORT_RULES = {
+      football: { maxPlayers: 11 },
+      soccer: { maxPlayers: 11 },
+      cricket: { maxPlayers: 11 },
+      basketball: { maxPlayers: 5 },
+      volleyball: { maxPlayers: 6 },
+      rugby: { maxPlayers: 15 },
+      badminton: { maxPlayers: 2 },
+      tennis: { maxPlayers: 2 },
+    };
+
+    function escapeHtml(value) {
+      const s = String(value ?? "");
+      return s
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function initials(name) {
+      const parts = String(name ?? "").trim().split(/\s+/).filter(Boolean);
+      const a = parts[0]?.[0] ?? "?";
+      const b = parts.length > 1 ? parts[parts.length - 1][0] : "";
+      return (a + b).toUpperCase();
+    }
+
+    function showAlert(type, message) {
+      const el = document.getElementById("alertArea");
+      el.innerHTML = `
+        <div class="alert alert-${type} mb-3" role="alert" style="border-radius: 14px;">
+          ${escapeHtml(message)}
+        </div>
+      `;
+      window.setTimeout(() => {
+        if (el.innerHTML.includes(message)) el.innerHTML = "";
+      }, 3500);
+    }
+
+    function sportEmoji(sport) {
+      const s = (sport || "").toLowerCase();
+      if (s.includes("football") || s.includes("soccer")) return "⚽";
+      if (s.includes("basketball")) return "🏀";
+      if (s.includes("cricket")) return "🏏";
+      if (s.includes("tennis")) return "🎾";
+      if (s.includes("badminton")) return "🏸";
+      if (s.includes("volleyball")) return "🏐";
+      if (s.includes("rugby")) return "🏉";
+      return "🏅";
+    }
+
+    function copyTeamId(id) {
+      navigator.clipboard.writeText(id).then(() => {
+        showAlert("success", "Team ID copied to clipboard!");
+      }).catch(() => {
+        const ta = document.createElement("textarea");
+        ta.value = id;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        showAlert("success", "Team ID copied!");
+      });
+    }
+
+    async function apiFetch(path, options) {
+      const res = await fetch(API + path, options);
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(txt || `Request failed: ${res.status}`);
+      }
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) return res.json();
+      return null;
+    }
+
+    async function loadData() {
+      // Use global helpers from api.js which respect the sport filter
+      const teams = await getTeams();
+      const players = await getPlayers();
+      const leaderboard = await getLeaderboard();
+      const matches = await getMatches();
+
+      state.teams = Array.isArray(teams) ? teams : [];
+      state.players = Array.isArray(players) ? players : [];
+      state.leaderboard = Array.isArray(leaderboard) ? leaderboard : [];
+      state.matches = Array.isArray(matches) ? matches : [];
+    }
+
+    function playersForTeam(teamId) {
+      return state.players.filter(p => String(p.team_id) === String(teamId));
+    }
+
+    function maxPlayersForSport(sport) {
+      const key = String(sport ?? "").trim().toLowerCase();
+      return SPORT_RULES[key]?.maxPlayers ?? 11;
+    }
+
+    function normalizeSportLabel(sport) {
+      const s = String(sport ?? "").trim().toLowerCase();
+      if (!s) return "";
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function pointsForTeam(teamName) {
+      const row = state.leaderboard.find(x => String(x.team_name).toLowerCase() === String(teamName).toLowerCase());
+      return row?.points ?? 0;
+    }
+
+    function matchesForTeam(teamId) {
+      return state.matches.filter(m =>
+        String(m.team1_id) === String(teamId) || String(m.team2_id) === String(teamId)
+      );
+    }
+
+    function parseMatchDate(value) {
+      if (!value) return null;
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return null;
+      return d;
+    }
+
+    function formatDate(value) {
+      const d = parseMatchDate(value);
+      if (!d) return escapeHtml(value ?? "");
+      return d.toLocaleString();
+    }
+
+    function renderTeamPlayersPreview(team) {
+      const players = playersForTeam(team.id);
+      const maxPlayers = maxPlayersForSport(team.sport);
+      const remaining = Math.max(0, maxPlayers - players.length);
+
+      if (players.length === 0) {
+        return `
+          <div>
+            <span class="badge-soft">0 / ${escapeHtml(maxPlayers)}</span>
+            <div class="muted" style="font-size:.85rem; margin-top:.25rem;">${escapeHtml(remaining)} slots available</div>
+          </div>
+        `;
+      }
+
+      const preview = players.slice(0, 4);
+      const more = players.length - preview.length;
+      const stack = preview.map(p => `<span class="avatar" title="${escapeHtml(p.name)}">${escapeHtml(initials(p.name))}</span>`).join("");
+      const moreEl = more > 0 ? `<span class="avatar more" title="+${more} more">+${more}</span>` : "";
+      const namesPreview = players.slice(0, 2).map(p => escapeHtml(p.name)).join(", ");
+      const namesTail = players.length > 2 ? ` +${players.length - 2} more` : "";
+
+      return `
+        <div>
+          <div class="avatar-stack">${stack}${moreEl}</div>
+          <div class="muted" style="font-size:.85rem; margin-top:.25rem;" title="${escapeHtml(players.map(p => p.name).join(", "))}">
+            ${namesPreview}${namesTail}
+          </div>
+          <div class="muted" style="font-size:.85rem;">${escapeHtml(remaining)} slot${remaining === 1 ? "" : "s"} left</div>
+        </div>
+      `;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("teamsTable");
+      document.getElementById("teamsCount").innerText = `${state.teams.length} teams`;
+
+      if (state.teams.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-4 muted">No teams yet. Create your first team.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = "";
+      state.teams.forEach(team => {
+        const id = escapeHtml(team.id);
+        const name = escapeHtml(team.name ?? "");
+        const pts = pointsForTeam(team.name ?? "");
+        const playerCount = playersForTeam(team.id).length;
+        const sport = escapeHtml(normalizeSportLabel(team.sport ?? ""));
+        const coach = escapeHtml((team.coach ?? "").toString());
+
+        html += `
+            <tr>
+            <td>
+              <div onclick="copyTeamId('${id}')" title="${id}" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;border:1px solid rgba(255,255,255,0.15);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+                ${sportEmoji(team.sport)}
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center" style="gap: .6rem;">
+                <span class="avatar" style="width: 38px; height: 38px; font-size: 13px; margin-left: 0;" title="${name}">${escapeHtml(initials(team.name))}</span>
+                <div>
+                  <button class="p-0 m-0" style="background:transparent;border:0;text-align:left;cursor:pointer;"
+                    onclick="openTeamDetails('${id}')" title="Open team details">
+                    <div style="font-weight:700; color:#fff; line-height:1.1; text-decoration: underline; text-underline-offset: 3px;">${name}</div>
+                  </button>
+                  <div class="muted" style="font-size: .9rem;">Coach: ${coach || "-"}</div>
+                </div>
+              </div>
+            </td>
+            <td>${renderTeamPlayersPreview(team)}</td>
+            <td>
+              <span class="badge-soft">${sport || "—"}</span>
+              <div class="muted" style="font-size:.85rem; margin-top:.25rem;">${playerCount} player${playerCount === 1 ? "" : "s"}</div>
+            </td>
+            <td><span class="badge-soft">${escapeHtml(pts)}</span></td>
+            <td>
+              <div class="d-flex admin-only" style="gap:.5rem; flex-wrap:wrap;">
+                <button class="btn btn-warning btn-sm btn-icon" onclick="openEdit('${id}')">Edit</button>
+                <button class="btn btn-danger btn-sm btn-icon" onclick="openDelete('${id}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    function openCreate() {
+      document.getElementById("teamModalTitle").innerText = "New Team";
+      document.getElementById("teamId").value = "";
+      document.getElementById("teamName").value = "";
+      document.getElementById("teamCoach").value = "";
+      document.getElementById("teamSport").value = "";
+      $("#teamModal").modal("show");
+      window.setTimeout(() => document.getElementById("teamName").focus(), 150);
+    }
+
+    function openEdit(id) {
+      const team = state.teams.find(t => String(t.id) === String(id));
+      if (!team) return showAlert("warning", "Team not found.");
+      document.getElementById("teamModalTitle").innerText = "Edit Team";
+      document.getElementById("teamId").value = String(team.id);
+      document.getElementById("teamName").value = team.name ?? "";
+      document.getElementById("teamCoach").value = team.coach ?? "";
+      document.getElementById("teamSport").value = (team.sport ?? "").toString().toLowerCase();
+      $("#teamModal").modal("show");
+      window.setTimeout(() => document.getElementById("teamName").focus(), 150);
+    }
+
+    function openDelete(id) {
+      const team = state.teams.find(t => String(t.id) === String(id));
+      if (!team) return showAlert("warning", "Team not found.");
+      document.getElementById("confirmText").innerText = `Delete "${team.name}"?`;
+      document.getElementById("confirmDeleteBtn").setAttribute("data-team-id", String(team.id));
+      $("#confirmModal").modal("show");
+    }
+
+    async function saveTeam() {
+      const id = document.getElementById("teamId").value.trim();
+      const name = document.getElementById("teamName").value.trim();
+      const coach = document.getElementById("teamCoach").value.trim();
+      const sport = document.getElementById("teamSport").value.trim();
+
+      if (!name || !coach || !sport) {
+        showAlert("warning", "Team name, coach, and sport are required.");
+        return;
+      }
+
+      const btn = document.getElementById("saveTeamBtn");
+      btn.disabled = true;
+      btn.innerText = "Saving…";
+
+      try {
+        if (!id) {
+          await apiFetch("/teams/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, coach, sport })
+          });
+          showAlert("success", "Team created.");
+        } else {
+          await apiFetch("/teams/" + encodeURIComponent(id), {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, coach, sport })
+          });
+          showAlert("success", "Team updated.");
+        }
+
+        $("#teamModal").modal("hide");
+        await refresh();
+      } catch (e) {
+        showAlert("danger", `Save failed. ${e?.message || ""}`.trim());
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Save";
+      }
+    }
+
+    async function confirmDelete() {
+      const id = document.getElementById("confirmDeleteBtn").getAttribute("data-team-id");
+      if (!id) return;
+
+      const btn = document.getElementById("confirmDeleteBtn");
+      btn.disabled = true;
+      btn.innerText = "Deleting…";
+
+      try {
+        await apiFetch("/teams/" + encodeURIComponent(id), { method: "DELETE" });
+        showAlert("success", "Team deleted.");
+        $("#confirmModal").modal("hide");
+        await refresh();
+      } catch (e) {
+        showAlert("danger", `Delete failed. ${e?.message || ""}`.trim());
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Delete";
+      }
+    }
+
+    async function refresh() {
+      try {
+        await loadData();
+        renderTable();
+      } catch (e) {
+        renderTable();
+        showAlert("danger", `Failed to load teams. ${e?.message || ""}`.trim());
+      }
+    }
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value ?? "";
+    }
+
+    function setHtml(id, html) {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = html ?? "";
+    }
+
+    function teamNameById(teamId) {
+      if (!teamId) return "-";
+      const t = state.teams.find(x => String(x.id) === String(teamId));
+      return t?.name ?? "Unknown Team";
+    }
+
+    function openTeamDetails(id) {
+      const team = state.teams.find(t => String(t.id) === String(id));
+      if (!team) return showAlert("warning", "Team not found.");
+
+      const sportLabel = normalizeSportLabel(team.sport ?? "");
+      const maxPlayers = maxPlayersForSport(team.sport);
+      const players = playersForTeam(team.id);
+      const remaining = Math.max(0, maxPlayers - players.length);
+      const pts = pointsForTeam(team.name ?? "");
+
+      setText("detailsTeamName", team.name ?? "-");
+      setText("detailsCoach", team.coach ?? "-");
+      setText("detailsSport", sportLabel || "-");
+      setText("detailsPoints", String(pts));
+      setText("detailsRoster", `${players.length} / ${maxPlayers} ( ${remaining} slot${remaining === 1 ? "" : "s"} left )`);
+
+      // Players list + enforce max roster
+      const playerList = players.length
+        ? players.map(p => `
+            <div class="d-flex align-items-center justify-content-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.08);">
+              <div class="d-flex align-items-center" style="gap:.6rem;">
+                <span class="avatar" style="margin-left:0;" title="${escapeHtml(p.name)}">${escapeHtml(initials(p.name))}</span>
+                <div>
+                  <div style="font-weight:700;">${escapeHtml(p.name)}</div>
+                  <div class="text-muted" style="font-size:.9rem;">${escapeHtml(p.position ?? "Player")}</div>
+                </div>
+              </div>
+              <button class="btn btn-outline-light btn-sm admin-only" onclick="removePlayerFromTeam('${escapeHtml(p.id)}')">Remove</button>
+            </div>
+          `).join("")
+        : `<div class="text-muted">No players yet. Add players to build the roster.</div>`;
+      setHtml("detailsPlayersList", playerList);
+
+      // Matches (upcoming + history)
+      const now = new Date();
+      const teamMatches = matchesForTeam(team.id);
+      const upcoming = teamMatches
+        .filter(m => {
+          const d = parseMatchDate(m.match_date);
+          return d ? d.getTime() > now.getTime() : false;
+        })
+        .sort((a, b) => (parseMatchDate(a.match_date)?.getTime() ?? 0) - (parseMatchDate(b.match_date)?.getTime() ?? 0));
+
+      const history = teamMatches
+        .filter(m => {
+          const d = parseMatchDate(m.match_date);
+          return d ? d.getTime() <= now.getTime() : true;
+        })
+        .sort((a, b) => (parseMatchDate(b.match_date)?.getTime() ?? 0) - (parseMatchDate(a.match_date)?.getTime() ?? 0));
+
+      const renderMatchRow = (m) => {
+        const t1 = escapeHtml(teamNameById(m.team1_id));
+        const t2 = escapeHtml(teamNameById(m.team2_id));
+        const winner = m.winner ? escapeHtml(teamNameById(m.winner)) : "Pending";
+        const date = escapeHtml(formatDate(m.match_date));
+        return `
+          <div class="py-2" style="border-bottom:1px solid rgba(255,255,255,0.08);">
+            <div style="font-weight:700;">${t1} vs ${t2}</div>
+            <div class="text-muted" style="font-size:.9rem;">${date} • Winner: ${winner}</div>
+          </div>
+        `;
+      };
+
+      setHtml("detailsUpcomingMatches", upcoming.length ? upcoming.map(renderMatchRow).join("") : `<div class="text-muted">No upcoming matches.</div>`);
+      setHtml("detailsMatchHistory", history.length ? history.map(renderMatchRow).join("") : `<div class="text-muted">No match history yet.</div>`);
+
+      // Assignment dropdown: only players not currently in this team
+      const availablePlayers = state.players
+        .filter(p => String(p.team_id ?? "") !== String(team.id))
+        .filter(p => p.name);
+
+      const options = availablePlayers.length
+        ? availablePlayers.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}${p.team_id ? ` (from ${escapeHtml(teamNameById(p.team_id))})` : ""}</option>`).join("")
+        : `<option value="" disabled>No available players</option>`;
+
+      const sel = document.getElementById("assignPlayerSelectEl");
+      if (sel) sel.innerHTML = `<option value="" selected disabled>Select player</option>${options}`;
+
+      // Disable add if roster full
+      const addBtn = document.getElementById("assignPlayerBtn");
+      if (addBtn) {
+        addBtn.disabled = players.length >= maxPlayers;
+        addBtn.title = addBtn.disabled ? "Roster is full for this sport" : "";
+      }
+
+      document.getElementById("detailsTeamId").value = String(team.id);
+      $("#teamDetailsModal").modal("show");
+    }
+
+    async function assignPlayerToTeam() {
+      const teamId = document.getElementById("detailsTeamId").value;
+      const select = document.getElementById("assignPlayerSelectEl") || document.getElementById("assignPlayerSelect");
+
+      const team = state.teams.find(t => String(t.id) === String(teamId));
+      if (!team) return showAlert("warning", "Team not found.");
+
+      const maxPlayers = maxPlayersForSport(team.sport);
+      const current = playersForTeam(teamId).length;
+      if (current >= maxPlayers) {
+        showAlert("warning", `Roster is full for ${normalizeSportLabel(team.sport)} (max ${maxPlayers}).`);
+        return;
+      }
+
+      const chosen = select?.value;
+      if (!chosen) {
+        showAlert("warning", "Select a player first.");
+        return;
+      }
+
+      const btn = document.getElementById("assignPlayerBtn");
+      btn.disabled = true;
+      btn.innerText = "Adding…";
+
+      try {
+        // Assumes FastAPI supports updating player's team assignment
+        await apiFetch("/players/" + encodeURIComponent(chosen), {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ team_id: teamId })
+        });
+        showAlert("success", "Player added to team.");
+        await refresh();
+        openTeamDetails(teamId);
+      } catch (e) {
+        showAlert("danger", `Add player failed. ${e?.message || ""}`.trim());
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Add";
+      }
+    }
+
+    async function removePlayerFromTeam(playerId) {
+      const teamId = document.getElementById("detailsTeamId").value;
+      try {
+        await apiFetch("/players/" + encodeURIComponent(playerId), {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ team_id: null })
+        });
+        showAlert("success", "Player removed from team.");
+        await refresh();
+        openTeamDetails(teamId);
+      } catch (e) {
+        showAlert("danger", `Remove failed. ${e?.message || ""}`.trim());
+      }
+    }
+
+    document.getElementById("openCreateBtn").addEventListener("click", openCreate);
+    document.getElementById("saveTeamBtn").addEventListener("click", saveTeam);
+    document.getElementById("confirmDeleteBtn").addEventListener("click", confirmDelete);
+
+    refresh();
+  </script>
+</body>
+
+</html>

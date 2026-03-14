@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Soccer &mdash; Website by Colorlib</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="fonts/icomoon/style.css">
+
+  <link rel="stylesheet" href="css/bootstrap/bootstrap.css">
+  <link rel="stylesheet" href="css/jquery-ui.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
+
+  <link rel="stylesheet" href="css/jquery.fancybox.min.css">
+
+  <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+
+  <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+
+  <link rel="stylesheet" href="css/aos.css">
+
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .admin-shell {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+
+    .card-glass {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+    }
+
+    .card-glass .card-header {
+      background: rgba(0, 0, 0, 0.10);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .muted {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .table-darkish {
+      color: #fff;
+    }
+
+    .table-darkish thead th {
+      border-top: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+    }
+
+    .table-darkish td,
+    .table-darkish th {
+      border-color: rgba(255, 255, 255, 0.08);
+      vertical-align: middle;
+    }
+
+    .badge-soft {
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.92);
+      font-weight: 600;
+      padding: 0.35rem 0.55rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+    }
+
+    .modal-backdrop.show {
+      opacity: 0.7;
+    }
+
+    .modal-content.modal-dark {
+      background: rgba(16, 22, 34, 0.96);
+      color: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+      border-radius: 14px;
+    }
+
+    .modal-content.modal-dark .modal-header,
+    .modal-content.modal-dark .modal-footer {
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+
+    .modal-content.modal-dark .close {
+      color: rgba(255, 255, 255, 0.85);
+      text-shadow: none;
+      opacity: 0.9;
+    }
+
+    .modal-content.modal-dark label {
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+    }
+
+    .modal-content.modal-dark .text-muted {
+      color: rgba(255, 255, 255, 0.65) !important;
+    }
+
+    .form-control,
+    .custom-select {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.10);
+      border-color: rgba(13, 110, 253, 0.55);
+      color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    }
+
+    select.form-control option,
+    select.custom-select option {
+      background-color: #101622;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .ai-bubble {
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.92);
+      margin-bottom: 10px;
+    }
+
+    .alert-area {
+      min-height: 44px;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: linear-gradient(rgba(16, 22, 34, 0.82), rgba(16, 22, 34, 0.82)), url('images/field.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      z-index: -1;
+    }
+
+    .site-section,
+    .bg-dark {
+      background-color: transparent !important;
+    }
+  </style>
+
+
+
+</head>
+
+<body>
+
+  <div class="site-wrap">
+
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icon-close2 js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+
+    <header class="site-navbar py-4 js-sticky-header" role="banner">
+
+      <div class="container">
+        <div class="d-flex align-items-center">
+          <div class="site-logo">
+            <a href="index.html">
+              <img src="images/logo.png" alt="Logo">
+            </a>
+          </div>
+          <div class="ml-auto">
+            <nav class="site-navigation position-relative text-right" role="navigation">
+              <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="main.html" class="nav-link">Teams</a></li>
+                <li class="active"><a href="players.html" class="nav-link">Players</a></li>
+                <li><a href="matches.html" class="nav-link">Matches</a></li>
+                <li><a href="blog.html" class="nav-link">Leaderboard</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+              </ul>
+            </nav>
+
+            <a href="#"
+              class="d-inline-block d-lg-none site-menu-toggle js-menu-toggle text-black float-right text-white"><span
+                class="icon-menu h3 text-white"></span></a>
+          </div>
+        </div>
+      </div>
+
+    </header>
+
+    <div class="hero overlay" style="background-image: url('images/bg_3.jpg');">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-5 mx-auto text-center">
+            <h1 class="text-white">Players</h1>
+            <p>Manage players, assign teams, and track performance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section">
+      <div class="container admin-shell">
+        <div class="d-flex align-items-center justify-content-between mb-3" style="gap:1rem;">
+          <div>
+            <h2 class="text-white mb-1">Players</h2>
+            <div class="muted">Create players, assign them to teams, and enforce sport constraints.</div>
+          </div>
+          <div class="d-flex" style="gap:.5rem; flex-wrap:wrap;">
+            <button class="btn btn-success admin-only" id="openCreatePlayerBtn">New Player</button>
+          </div>
+        </div>
+
+        <div id="alertArea" class="alert-area"></div>
+
+        <div class="row">
+          <div class="col-lg-12 mb-4">
+            <div class="card card-glass">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <div>Players list</div>
+                <div class="d-flex align-items-center" style="gap:1rem;">
+                  <input type="text" id="playerSearch" class="form-control form-control-sm"
+                    placeholder="Search players..." style="max-width: 180px;">
+                  <div class="muted" id="playersCount">0 players</div>
+                </div>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-darkish mb-0">
+                    <thead>
+                      <tr>
+                        <th style="width:50px;"></th>
+                        <th>Name</th>
+                        <th style="width:160px;">Position</th>
+                        <th style="width:190px;">Team</th>
+                        <th style="width:170px;">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="playersTable">
+                      <tr>
+                        <td colspan="5" class="p-4 muted">Loading…</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-12 mb-4">
+            <div class="card card-glass">
+              <div class="card-header">AI assistant</div>
+              <div class="card-body">
+                <div class="muted" style="margin-bottom:.75rem;">
+                  Pick a player and ask for training suggestions or role advice.
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="mb-1" for="aiPlayerSelect">Player</label>
+                      <select id="aiPlayerSelect" class="form-control custom-select">
+                        <option value="" selected disabled>Loading…</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="mb-1" for="aiTask">Task</label>
+                      <select id="aiTask" class="form-control custom-select">
+                        <option value="training">Training plan</option>
+                        <option value="position">Position tips</option>
+                        <option value="injury">Injury prevention</option>
+                        <option value="discipline">Discipline & mindset</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-primary btn-sm mb-3" id="aiRunBtn">Get suggestions</button>
+                  </div>
+                </div>
+                <div class="mt-2" id="aiOutput">
+                  <div class="ai-bubble muted">Select a player to get suggestions.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Create/Edit Player Modal -->
+    <div class="modal fade" id="playerModal" tabindex="-1" role="dialog" aria-labelledby="playerModalTitle"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modal-dark">
+          <div class="modal-header">
+            <h5 class="modal-title" id="playerModalTitle">New Player</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="playerForm">
+              <input type="hidden" id="playerId">
+              <div class="form-group">
+                <label class="mb-1" for="playerName">Player name</label>
+                <input id="playerName" class="form-control" placeholder="e.g., Sam Kerr" required>
+              </div>
+              <div class="form-group">
+                <label class="mb-1" for="playerPosition">Position</label>
+                <input id="playerPosition" class="form-control" placeholder="e.g., Forward / Goalkeeper" required>
+              </div>
+              <div class="form-group">
+                <label class="mb-1" for="playerHistory">History</label>
+                <textarea id="playerHistory" class="form-control" rows="2"
+                  placeholder="Previous clubs, experience, etc. (optional)"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="mb-1" for="playerAwards">Awards</label>
+                <textarea id="playerAwards" class="form-control" rows="2"
+                  placeholder="MVPs, trophies, etc. (optional)"></textarea>
+              </div>
+              <div class="form-group mb-0">
+                <label class="mb-1" for="playerTeam">Team (optional)</label>
+                <select id="playerTeam" class="form-control custom-select">
+                  <option value="" selected>No team</option>
+                </select>
+                <small class="form-text text-muted">
+                  Constraint: you must create a player first; then they can be assigned to a team. Team roster limits
+                  are enforced.
+                </small>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button id="savePlayerBtn" type="button" class="btn btn-success">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete confirm Modal -->
+    <div class="modal fade" id="confirmPlayerDeleteModal" tabindex="-1" role="dialog"
+      aria-labelledby="confirmPlayerDeleteTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modal-dark">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmPlayerDeleteTitle">Confirm delete</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="confirmPlayerDeleteText">Delete this player?</div>
+            <div class="text-muted mt-2" style="font-size:.92rem;">
+              This will remove the player record.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button id="confirmPlayerDeleteBtn" type="button" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Player History Popup Modal -->
+    <div class="modal fade" id="playerHistoryModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modal-dark">
+          <div class="modal-header">
+            <h5 class="modal-title" id="playerHistoryTitle">Player Details</h5>
+            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="playerHistoryBody">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <footer class="footer-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Quick Links</h3>
+              <ul class="list-unstyled links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="main.html">Teams</a></li>
+                <li><a href="players.html">Players</a></li>
+                <li><a href="matches.html">Matches</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Sports</h3>
+              <ul class="list-unstyled links">
+                <li><a href="blog.html">Leaderboard</a></li>
+                <li><a href="matches.html">Fixtures</a></li>
+                <li><a href="players.html">Player Stats</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Management</h3>
+              <ul class="list-unstyled links">
+                <li><a href="main.html">Create Team</a></li>
+                <li><a href="players.html">Add Player</a></li>
+                <li><a href="matches.html">Schedule Match</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="widget mb-3">
+              <h3>Contact</h3>
+              <ul class="list-unstyled links">
+                <li><a href="contact.html">Get in Touch</a></li>
+                <li><a href="#">support@sportsms.com</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row text-center">
+          <div class="col-md-12">
+            <div class="pt-5">
+              <p>Copyright &copy;
+                <script>document.write(new Date().getFullYear());</script> Sports Management System. All rights
+                reserved.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
+
+  </div>
+  <!-- .site-wrap -->
+
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/jquery-migrate-3.0.1.min.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/jquery.stellar.min.js"></script>
+  <script src="js/jquery.countdown.min.js"></script>
+  <script src="js/bootstrap-datepicker.min.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/aos.js"></script>
+  <script src="js/jquery.fancybox.min.js"></script>
+  <script src="js/jquery.sticky.js"></script>
+  <script src="js/jquery.mb.YTPlayer.min.js"></script>
+
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    const SPORT_RULES = {
+      football: { maxPlayers: 11 },
+      soccer: { maxPlayers: 11 },
+      cricket: { maxPlayers: 11 },
+      basketball: { maxPlayers: 5 },
+      volleyball: { maxPlayers: 6 },
+      rugby: { maxPlayers: 15 },
+      badminton: { maxPlayers: 2 },
+      tennis: { maxPlayers: 2 },
+    };
+
+    let state = {
+      teams: [],
+      players: [],
+      teamsById: {},
+    };
+
+    function escapeHtml(value) {
+      const s = String(value ?? "");
+      return s
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showAlert(type, message) {
+      const el = document.getElementById("alertArea");
+      el.innerHTML = `
+        <div class="alert alert-${type} mb-3" role="alert" style="border-radius: 14px;">
+          ${escapeHtml(message)}
+        </div>
+      `;
+      window.setTimeout(() => {
+        if (el.innerHTML.includes(message)) el.innerHTML = "";
+      }, 3500);
+    }
+
+    async function apiFetch(path, options) {
+      const res = await fetch(API + path, options);
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(txt || `Request failed: ${res.status}`);
+      }
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) return res.json();
+      return null;
+    }
+
+    function normalizeSport(sport) {
+      const s = String(sport ?? "").trim().toLowerCase();
+      return s;
+    }
+
+    function maxPlayersForTeam(teamId) {
+      const team = state.teamsById[String(teamId)];
+      const s = normalizeSport(team?.sport);
+      return SPORT_RULES[s]?.maxPlayers ?? 11;
+    }
+
+    function playersInTeam(teamId) {
+      return state.players.filter(p => String(p.team_id ?? "") === String(teamId));
+    }
+
+    function canJoinTeam(teamId) {
+      const maxPlayers = maxPlayersForTeam(teamId);
+      const count = playersInTeam(teamId).length;
+      return count < maxPlayers;
+    }
+
+    async function loadData() {
+      // Use global helpers from api.js which respect the sport filter
+      const teams = await getTeams();
+      const players = await getPlayers();
+      
+      state.teams = Array.isArray(teams) ? teams : [];
+      state.players = Array.isArray(players) ? players : [];
+      state.teamsById = {};
+      state.teams.forEach(t => { state.teamsById[String(t.id)] = t; });
+    }
+
+    function renderPlayersTable() {
+      const tbody = document.getElementById("playersTable");
+      const filterText = (document.getElementById("playerSearch")?.value || "").toLowerCase();
+
+      const filteredPlayers = state.players.filter(p => {
+        const tName = p.team_id ? (state.teamsById[String(p.team_id)]?.name || "") : "";
+        return (p.name || "").toLowerCase().includes(filterText) ||
+          (p.position || "").toLowerCase().includes(filterText) ||
+          tName.toLowerCase().includes(filterText);
+      });
+
+      document.getElementById("playersCount").innerText = `${filteredPlayers.length} players`;
+
+      if (filteredPlayers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 muted">No players found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filteredPlayers.map(p => {
+        const teamName = p.team_id ? (state.teamsById[String(p.team_id)]?.name ?? "Unknown Team") : "—";
+        const teamSport = p.team_id ? (state.teamsById[String(p.team_id)]?.sport ?? "") : "";
+        const teamBadge = p.team_id
+          ? `<span class="badge-soft">${escapeHtml(teamName)}</span><div class="muted" style="font-size:.85rem;margin-top:.25rem;">${escapeHtml(teamSport)}</div>`
+          : `<span class="badge-soft">No team</span>`;
+
+        // Tooltip or small text for history/awards
+        let extraInfo = "";
+        if (p.history || p.awards) {
+          extraInfo = `<div style="font-size:0.8rem; margin-top:5px; color:rgba(255,255,255,0.6);">
+             ${p.history ? `<strong>History:</strong> ${escapeHtml(p.history)}<br>` : ""}
+             ${p.awards ? `<strong>Awards:</strong> ${escapeHtml(p.awards)}` : ""}
+           </div>`;
+        }
+
+        return `
+          <tr>
+            <td>
+              <div class="copy-id-icon" title="Click to copy ID" onclick="copyPlayerId('${escapeHtml(p.id)}')" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.10);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;" data-toggle="tooltip" data-placement="top" data-original-title="${escapeHtml(p.id)}">
+                📋
+              </div>
+            </td>
+            <td>
+              <a href="#" onclick="showPlayerHistory('${escapeHtml(p.id)}'); return false;" style="font-weight:700; color:#fff; text-decoration:underline; cursor:pointer;">${escapeHtml(p.name)}</a>
+            </td>
+            <td>${escapeHtml(p.position ?? "Player")}</td>
+            <td>${teamBadge}</td>
+            <td>
+              <div class="d-flex admin-only" style="gap:.5rem; flex-wrap:wrap;">
+                <button class="btn btn-warning btn-sm" onclick="openEditPlayer('${escapeHtml(p.id)}')">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="openDeletePlayer('${escapeHtml(p.id)}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderTeamOptions(selectEl, currentTeamId) {
+      const opts = [`<option value="" ${!currentTeamId ? "selected" : ""}>No team</option>`];
+      state.teams.forEach(t => {
+        const id = String(t.id);
+        const maxP = maxPlayersForTeam(id);
+        const count = playersInTeam(id).length;
+        const remaining = Math.max(0, maxP - count);
+        const disabled = remaining <= 0 && String(currentTeamId ?? "") !== id;
+        const label = `${t.name} • ${t.sport ?? ""} • ${count}/${maxP}`;
+        opts.push(`<option value="${escapeHtml(id)}" ${String(currentTeamId ?? "") === id ? "selected" : ""} ${disabled ? "disabled" : ""}>${escapeHtml(label)}</option>`);
+      });
+      selectEl.innerHTML = opts.join("");
+    }
+
+    function openCreatePlayer() {
+      document.getElementById("playerModalTitle").innerText = "New Player";
+      document.getElementById("playerId").value = "";
+      document.getElementById("playerName").value = "";
+      document.getElementById("playerPosition").value = "";
+      document.getElementById("playerHistory").value = "";
+      document.getElementById("playerAwards").value = "";
+      renderTeamOptions(document.getElementById("playerTeam"), "");
+      $("#playerModal").modal("show");
+      window.setTimeout(() => document.getElementById("playerName").focus(), 150);
+    }
+
+    function openEditPlayer(id) {
+      const p = state.players.find(x => String(x.id) === String(id));
+      if (!p) return showAlert("warning", "Player not found.");
+      document.getElementById("playerModalTitle").innerText = "Edit Player";
+      document.getElementById("playerId").value = String(p.id);
+      document.getElementById("playerName").value = p.name ?? "";
+      document.getElementById("playerPosition").value = p.position ?? "";
+      document.getElementById("playerHistory").value = p.history ?? "";
+      document.getElementById("playerAwards").value = p.awards ?? "";
+      renderTeamOptions(document.getElementById("playerTeam"), p.team_id ?? "");
+      $("#playerModal").modal("show");
+      window.setTimeout(() => document.getElementById("playerName").focus(), 150);
+    }
+
+    function openDeletePlayer(id) {
+      const p = state.players.find(x => String(x.id) === String(id));
+      if (!p) return showAlert("warning", "Player not found.");
+      document.getElementById("confirmPlayerDeleteText").innerText = `Delete "${p.name}"?`;
+      document.getElementById("confirmPlayerDeleteBtn").setAttribute("data-player-id", String(p.id));
+      $("#confirmPlayerDeleteModal").modal("show");
+    }
+
+    async function savePlayer() {
+      const id = document.getElementById("playerId").value.trim();
+      const name = document.getElementById("playerName").value.trim();
+      const position = document.getElementById("playerPosition").value.trim();
+      const history = document.getElementById("playerHistory").value.trim();
+      const awards = document.getElementById("playerAwards").value.trim();
+      const teamId = document.getElementById("playerTeam").value;
+
+      if (!name || !position) {
+        showAlert("warning", "Player name and position are required.");
+        return;
+      }
+
+      if (teamId) {
+        if (!canJoinTeam(teamId)) {
+          const maxP = maxPlayersForTeam(teamId);
+          showAlert("warning", `Team roster is full for this sport (max ${maxP}).`);
+          return;
+        }
+      }
+
+      const btn = document.getElementById("savePlayerBtn");
+      btn.disabled = true;
+      btn.innerText = "Saving…";
+
+      try {
+        if (!id) {
+          await apiFetch("/players/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, position, team_id: teamId || null, history, awards })
+          });
+          showAlert("success", "Player created.");
+        } else {
+          await apiFetch("/players/" + encodeURIComponent(id), {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, position, team_id: teamId || null, history, awards })
+          });
+          showAlert("success", "Player updated.");
+        }
+        $("#playerModal").modal("hide");
+        await refresh();
+      } catch (e) {
+        showAlert("danger", `Save failed. ${e?.message || ""}`.trim());
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Save";
+      }
+    }
+
+    async function confirmPlayerDelete() {
+      const id = document.getElementById("confirmPlayerDeleteBtn").getAttribute("data-player-id");
+      if (!id) return;
+
+      const btn = document.getElementById("confirmPlayerDeleteBtn");
+      btn.disabled = true;
+      btn.innerText = "Deleting…";
+
+      try {
+        await apiFetch("/players/" + encodeURIComponent(id), { method: "DELETE" });
+        showAlert("success", "Player deleted.");
+        $("#confirmPlayerDeleteModal").modal("hide");
+        await refresh();
+      } catch (e) {
+        showAlert("danger", `Delete failed. ${e?.message || ""}`.trim());
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Delete";
+      }
+    }
+
+    function renderAiPlayerSelect() {
+      const sel = document.getElementById("aiPlayerSelect");
+      if (!sel) return;
+      if (state.players.length === 0) {
+        sel.innerHTML = `<option value="" selected disabled>No players</option>`;
+        return;
+      }
+      sel.innerHTML = `<option value="" selected disabled>Select player</option>` + state.players
+        .map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`)
+        .join("");
+    }
+
+    function aiSuggestionsFor(player, task) {
+      const team = player.team_id ? state.teamsById[String(player.team_id)] : null;
+      const sport = normalizeSport(team?.sport);
+      const pos = String(player.position ?? "").toLowerCase();
+
+      const bullets = [];
+      if (task === "training") {
+        bullets.push("Set 2–3 measurable goals (speed, endurance, strength).");
+        if (sport === "soccer" || sport === "football") {
+          bullets.push("Do interval runs 2x/week + ball drills 3x/week.");
+          if (pos.includes("goal")) bullets.push("Add reflex + lateral movement work (short bursts).");
+          if (pos.includes("forward")) bullets.push("Finishing drills + first-touch under pressure.");
+          if (pos.includes("def")) bullets.push("1v1 defending stance + recovery sprint drills.");
+        } else if (sport === "basketball") {
+          bullets.push("Footwork + shooting form daily (short sessions).");
+          bullets.push("Conditioning: suicides/HIIT 2–3x/week.");
+        } else if (sport === "cricket") {
+          bullets.push("Skill split: batting timing / bowling accuracy / fielding agility.");
+          bullets.push("Add shoulder + core stability (injury prevention).");
+        } else {
+          bullets.push("Prioritize sport-specific mobility + skill repetition.");
+        }
+      }
+
+      if (task === "position") {
+        bullets.push("Clarify role expectations and 3 key responsibilities.");
+        if (pos.includes("forward")) bullets.push("Work on off-the-ball movement and finishing under pressure.");
+        if (pos.includes("mid")) bullets.push("Scan before receiving; improve passing range and pressing triggers.");
+        if (pos.includes("def")) bullets.push("Body positioning, tackling timing, and communication.");
+        if (pos.includes("goal")) bullets.push("Shot-stopping + distribution; practice set-piece organization.");
+        if (bullets.length === 1) bullets.push("Use position-specific drills and review match clips weekly.");
+      }
+
+      if (task === "injury") {
+        bullets.push("Warm-up 8–12 minutes (dynamic mobility) + cool down.");
+        bullets.push("Increase load gradually (no big jumps week to week).");
+        bullets.push("Prioritize sleep, hydration, and 2 strength sessions/week.");
+      }
+
+      if (task === "discipline") {
+        bullets.push("Use a simple routine: pre-match checklist + post-match reflection.");
+        bullets.push("Track training attendance and 1 improvement point per session.");
+        bullets.push("Set team-first behaviors: punctuality, communication, respect.");
+      }
+
+      // Constraints reminders
+      if (!player.team_id) bullets.push("Constraint: assign a team only after player is created.");
+      if (player.team_id) {
+        const maxP = maxPlayersForTeam(player.team_id);
+        const count = playersInTeam(player.team_id).length;
+        if (count >= maxP) bullets.push(`Constraint: team roster is full (${count}/${maxP}). Consider transfers.`);
+      }
+
+      return bullets;
+    }
+
+    function runAi() {
+      const playerId = document.getElementById("aiPlayerSelect").value;
+      const task = document.getElementById("aiTask").value;
+      const out = document.getElementById("aiOutput");
+      if (!playerId) {
+        out.innerHTML = `<div class="ai-bubble muted">Select a player first.</div>`;
+        return;
+      }
+      const player = state.players.find(p => String(p.id) === String(playerId));
+      const bullets = aiSuggestionsFor(player, task);
+      out.innerHTML = `
+        <div class="ai-bubble">
+          <div style="font-weight:700; margin-bottom:.35rem;">Suggestions for ${escapeHtml(player.name)}</div>
+          <ul style="margin:0; padding-left: 18px;">
+            ${bullets.map(b => `<li>${escapeHtml(b)}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+    }
+
+    function copyPlayerId(id) {
+      navigator.clipboard.writeText(id).then(() => {
+        showAlert("success", "Player ID copied to clipboard!");
+      }).catch(() => {
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = id;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        showAlert("success", "Player ID copied!");
+      });
+    }
+
+    function showPlayerHistory(id) {
+      const p = state.players.find(x => String(x.id) === String(id));
+      if (!p) return;
+
+      const team = state.teams.find(t => String(t.id) === String(p.team_id));
+      const teamName = team ? team.name : "Unassigned";
+      const sport = team ? (team.sport || "-") : "-";
+
+      let html = `
+        <div class="mb-3">
+          <strong class="text-white d-block mb-1">Name</strong>
+          <span>${escapeHtml(p.name)}</span>
+        </div>
+        <div class="mb-3">
+          <strong class="text-white d-block mb-1">Position</strong>
+          <span>${escapeHtml(p.position || "-")}</span>
+        </div>
+        <div class="mb-3">
+          <strong class="text-white d-block mb-1">Team</strong>
+          <span>${escapeHtml(teamName)} (${escapeHtml(sport)})</span>
+        </div>
+      `;
+
+      if (p.history) {
+        html += `
+          <div class="mb-3">
+            <strong class="text-white d-block mb-1">📜 History</strong>
+            <div style="background:rgba(255,255,255,0.05);padding:10px 14px;border-radius:8px;white-space:pre-wrap;">${escapeHtml(p.history)}</div>
+          </div>
+        `;
+      }
+
+      if (p.awards) {
+        html += `
+          <div class="mb-3">
+            <strong class="text-white d-block mb-1">🏆 Awards & Achievements</strong>
+            <div style="background:rgba(255,255,255,0.05);padding:10px 14px;border-radius:8px;white-space:pre-wrap;">${escapeHtml(p.awards)}</div>
+          </div>
+        `;
+      }
+
+      if (!p.history && !p.awards) {
+        html += `<div class="muted" style="font-style:italic;">No history or awards recorded for this player yet.</div>`;
+      }
+
+      document.getElementById("playerHistoryTitle").innerText = p.name;
+      document.getElementById("playerHistoryBody").innerHTML = html;
+      $("#playerHistoryModal").modal("show");
+    }
+
+    async function refresh() {
+      try {
+        await loadData();
+        renderPlayersTable();
+        renderAiPlayerSelect();
+        // Keep create form team dropdown in sync if modal is open
+        const teamSelect = document.getElementById("playerTeam");
+        if (teamSelect && $("#playerModal").hasClass("show")) {
+          renderTeamOptions(teamSelect, teamSelect.value);
+        }
+      } catch (e) {
+        showAlert("danger", `Failed to load players. ${e?.message || ""}`.trim());
+      }
+    }
+
+    document.getElementById("openCreatePlayerBtn").addEventListener("click", openCreatePlayer);
+    document.getElementById("savePlayerBtn").addEventListener("click", savePlayer);
+    document.getElementById("confirmPlayerDeleteBtn").addEventListener("click", confirmPlayerDelete);
+    document.getElementById("aiRunBtn").addEventListener("click", runAi);
+
+    document.getElementById("playerSearch")?.addEventListener("input", renderPlayersTable);
+
+    refresh();
+  </script>
+</body>
+
+</html>
