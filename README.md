@@ -6,51 +6,88 @@ A modern, responsive web application for managing sports teams, players, and mat
 
 ### For Admins
 - **Full Management**: Create, Edit, and Delete teams, players, and matches.
-- **Sport Filter**: Universal filter to manage multiple sports (Football, Basketball, Cricket, etc.) from a single dashboard.
+- **Sport Filter**: Universal filter to manage multiple sports from a single dashboard.
 - **Roster Control**: Enforce sport-specific roster limits and position constraints.
-- **ID Access**: Quickly copy Team and Player IDs for administrative tasks.
+- **ID Access**: Toggleable database IDs for administrative tasks.
 
 ### For Users
 - **Personal Dashboard**: View upcoming matches, team standings, and personal stats.
-- **Browse Content**: View all teams and player profiles across the platform.
+- **Browse Content**: Explore teams and player profiles with restricted editing rights.
 - **Leaderboards**: Track rankings and champions across different sports.
-- **Privacy**: Simplified view without complex IDs or administrative controls.
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Backend Setup (The Engine)
+The backend is built with Python and FastAPI. It handles all data storage and business logic.
+
+1.  **Navigate to the Backend directory**:
+    ```bash
+    cd backend/backend
+    ```
+2.  **Create a Virtual Environment** (Optional but recommended):
+    ```bash
+    python -m venv venv
+    ./venv/Scripts/activate  # On Windows
+    source venv/bin/activate # On Mac/Linux
+    ```
+3.  **Install Dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
+4.  **Launch the API Server**:
+    ```bash
+    uvicorn app.main:app --reload
+    ```
+    *The server will start at `http://127.0.0.1:8000`.*
+
+### 2. Frontend Setup (The Interface)
+The frontend is a static application. It requires the backend to be running to fetch and display data.
+
+1.  **Method A: Live Server (Recommended)**
+    - If using VS Code, install the **Live Server** extension.
+    - Right-click on `frontend/login.html` and select **"Open with Live Server"**.
+2.  **Method B: Direct Browser**
+    - Simply open `frontend/login.html` in any modern web browser (Edge, Chrome, Firefox).
+3.  **Verify Connection**:
+    - Ensure the URL in the browser bar is something like `http://127.0.0.1:5500/login.html` or the local file path.
+    - The application will automatically communicate with the backend at `http://127.0.0.1:8000`.
+
+---
 
 ## 🛠️ Technology Stack
 
 - **Frontend**: Vanilla HTML5, CSS3, JavaScript.
-    - **Styling**: Bootstrap 4.5, Custom Glassmorphism UI, AOS (Animate on Scroll).
-    - **Logic**: Async/Await Fetch API, LocalStorage session management.
-- **Backend**: Python FastAPI.
-    - **Database**: SQLite3.
-    - **Architecture**: RESTful API design.
+    - **Styling**: Bootstrap 4.5 + Custom Glassmorphism UI.
+    - **Animations**: AOS (Animate on Scroll).
+- **Backend**: Python 3.9+ with **FastAPI**.
+- **Database**: **SQLite3** (No separate installation required).
 
-## 📁 Project Structure
+## 🌐 One-Link Deployment (Render.com)
 
-```text
-soccer-master/
-├── frontend/             # HTML/JS/CSS source files
-│   ├── js/api.js         # Core API utility and UI injection
-│   ├── images/           # Assets (field.jpg, bg_3.jpg, etc.)
-│   └── *.html            # Page templates
-├── backend/
-│   └── backend/          # FastAPI Implementation
-│       ├── app/          # API routes and database models
-│       ├── sports.db     # SQLite database
-│       └── requirements.txt
-└── .gitignore            # Git exclusion rules
-```
+To get a single working link for your project, follow these steps:
 
-## ⚙️ Setup Instructions
+### 1. Unified Structure
+I have already restructured the project so the **Backend now serves the Frontend**. This means you only need to deploy the backend to get a single working URL.
 
-### Backend
-1. Navigate to `backend/backend`.
-2. Install dependencies: `pip install -r requirements.txt`.
-3. Run the server: `uvicorn app.main:app --reload`.
+### 2. Deployment Steps
+1.  **Host on GitHub**: Push your current code (specifically the `backend/backend` folder) to a GitHub repository.
+2.  **Create Render Account**: Sign up at [Render.com](https://render.com).
+3.  **New Web Service**:
+    - Click **"New +"** -> **"Web Service"**.
+    - Connect your GitHub repository.
+4.  **Configure Settings**:
+    - **Name**: `sports-management-system`
+    - **Root Directory**: `backend/backend`
+    - **Environment**: `Python 3`
+    - **Build Command**: `pip install -r requirements.txt`
+    - **Start Command**: `gunicorn -k uvicorn.workers.UvicornWorker app.main:app`
+5.  **Deploy**: Click **"Create Web Service"**.
 
-### Frontend
-1. The frontend is static. Open `login.html` in any modern web browser or use a Live Server.
-2. Ensure the backend is running at `http://127.0.0.1:8000`.
+Once finished, Render will provide a link (e.g., `https://sports-ms.onrender.com`). Clicking this link will open your application perfectly!
+
+---
 
 ## 🎨 Design Philosophy
-The UI follows a **Glassmorphic** design language, using translucent cards with background blurs over high-quality sports imagery (`field.jpg`). It provides a premium, "living" feel with subtle hover animations and a dark-theme aesthetic.
+The UI follows a **Glassmorphic** design language, using translucent cards with background blurs over high-quality sports imagery. It provides a premium, "living" feel with subtle hover animations and a professional dark-theme aesthetic.

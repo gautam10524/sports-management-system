@@ -1,0 +1,9 @@
+import glob
+import os
+
+for f in glob.glob('*.html'):
+    with open(f, 'r', encoding='utf-8') as file:
+        content = file.read()
+    content = content.replace('<script src="js/api.js"></script>`n  <script src="js/main.js"></script>', '<script src="js/api.js"></script>\n  <script src="js/main.js"></script>')
+    with open(f, 'w', encoding='utf-8') as file:
+        file.write(content)

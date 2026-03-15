@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+python-multipart
+# Add any other libraries you used here, e.g.
+# requests
+# openai (if you use it for the AI assistant later)

@@ -1,0 +1,267 @@
+from fastapi import FastAPI, HTTPException, Request, Depends, status
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.orm import declarative_base, sessionmaker, Session
+from typing import List, Optional
+import os
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    is_admin = Column(Boolean, default=False)
+    name = Column(String)
+    age = Column(Integer, nullable=True)
+    dob = Column(String, nullable=True)
+    sport = Column(String, nullable=True)
+    email = Column(String, unique=True, index=True)
+    password = Column(String)
+
+class Team(Base):
+    __tablename__ = "teams"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    sport = Column(String, nullable=True)
+    wins = Column(Integer, default=0)
+    draws = Column(Integer, default=0)
+    losses = Column(Integer, default=0)
+    points = Column(Integer, default=0)
+
+class Player(Base):
+    __tablename__ = "players"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    position = Column(String, nullable=True)
+    team_id = Column(Integer, nullable=True)
+    sport = Column(String, nullable=True)
+    awards = Column(String, nullable=True)
+
+class Match(Base):
+    __tablename__ = "matches"
+    id = Column(Integer, primary_key=True, index=True)
+    team1_id = Column(Integer)
+    team2_id = Column(Integer)
+    match_date = Column(String)
+    winner = Column(Integer, nullable=True)
+    sport = Column(String, nullable=True)
+
+engine = create_engine("sqlite:///./database.db", connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Basic initialization
+db = SessionLocal()
+admin = db.query(User).filter(User.email == "root@gmail.com").first()
+if not admin:
+    admin = User(is_admin=True, name="Admin", email="root@gmail.com", password="root", sport="All")
+    db.add(admin)
+    db.commit()
+db.close()
+
+
+# Schemas
+class UserCreate(BaseModel):
+    name: str
+    age: Optional[int] = None
+    dob: Optional[str] = None
+    sport: Optional[str] = None
+    email: str
+    password: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+class TeamSchema(BaseModel):
+    id: Optional[int] = None
+    name: str
+    sport: Optional[str] = None
+    wins: int = 0
+    draws: int = 0
+    losses: int = 0
+    points: int = 0
+
+class PlayerSchema(BaseModel):
+    id: Optional[int] = None
+    name: str
+    position: Optional[str] = None
+    team_id: Optional[int] = None
+    sport: Optional[str] = None
+    awards: Optional[str] = None
+
+class MatchSchema(BaseModel):
+    id: Optional[int] = None
+    team1_id: int
+    team2_id: int
+    match_date: str
+    winner: Optional[int] = None
+    sport: Optional[str] = None
+
+
+# Endpoints
+
+@app.post("/register")
+def register(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.email == user.email).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    new_user = User(**user.dict(), is_admin=False)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"message": "User registered successfully", "id": new_user.id}
+
+@app.post("/login")
+def login(user: UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.email == user.email, User.password == user.password).first()
+    if not db_user:
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+    return {
+        "message": "Login successful",
+        "id": db_user.id,
+        "is_admin": db_user.is_admin,
+        "name": db_user.name,
+        "sport": db_user.sport
+    }
+
+@app.get("/users/{user_id}")
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+@app.get("/teams/")
+def get_teams(sport: Optional[str] = None, db: Session = Depends(get_db)):
+    if sport and sport != "All":
+        return db.query(Team).filter(Team.sport == sport).all()
+    return db.query(Team).all()
+
+@app.post("/teams/")
+def create_team(team: TeamSchema, db: Session = Depends(get_db)):
+    new_team = Team(**team.dict(exclude={"id"}))
+    db.add(new_team)
+    db.commit()
+    db.refresh(new_team)
+    return new_team
+
+@app.put("/teams/{team_id}")
+def update_team(team_id: int, team: TeamSchema, db: Session = Depends(get_db)):
+    db_team = db.query(Team).filter(Team.id == team_id).first()
+    for key, value in team.dict(exclude={"id"}).items():
+        setattr(db_team, key, value)
+    db.commit()
+    return db_team
+
+@app.delete("/teams/{team_id}")
+def delete_team(team_id: int, db: Session = Depends(get_db)):
+    db_team = db.query(Team).filter(Team.id == team_id).first()
+    if db_team:
+        db.delete(db_team)
+        db.commit()
+    return {"message": "Deleted"}
+
+@app.get("/players/")
+def get_players(sport: Optional[str] = None, db: Session = Depends(get_db)):
+    if sport and sport != "All":
+        return db.query(Player).filter(Player.sport == sport).all()
+    return db.query(Player).all()
+
+@app.post("/players/")
+def create_player(player: PlayerSchema, db: Session = Depends(get_db)):
+    new_player = Player(**player.dict(exclude={"id"}))
+    db.add(new_player)
+    db.commit()
+    db.refresh(new_player)
+    return new_player
+
+@app.put("/players/{player_id}")
+def update_player(player_id: int, player: PlayerSchema, db: Session = Depends(get_db)):
+    db_player = db.query(Player).filter(Player.id == player_id).first()
+    for key, value in player.dict(exclude={"id"}).items():
+        setattr(db_player, key, value)
+    db.commit()
+    return db_player
+
+@app.delete("/players/{player_id}")
+def delete_player(player_id: int, db: Session = Depends(get_db)):
+    db_player = db.query(Player).filter(Player.id == player_id).first()
+    if db_player:
+        db.delete(db_player)
+        db.commit()
+    return {"message": "Deleted"}
+
+@app.get("/matches/")
+def get_matches(sport: Optional[str] = None, db: Session = Depends(get_db)):
+    if sport and sport != "All":
+        return db.query(Match).filter(Match.sport == sport).all()
+    return db.query(Match).all()
+
+@app.post("/matches/")
+def create_match(match: MatchSchema, db: Session = Depends(get_db)):
+    new_match = Match(**match.dict(exclude={"id"}))
+    db.add(new_match)
+    db.commit()
+    db.refresh(new_match)
+    return new_match
+
+@app.put("/matches/{match_id}")
+def update_match(match_id: int, match: MatchSchema, db: Session = Depends(get_db)):
+    db_match = db.query(Match).filter(Match.id == match_id).first()
+    for key, value in match.dict(exclude={"id"}).items():
+        setattr(db_match, key, value)
+    db.commit()
+    return db_match
+
+@app.delete("/matches/{match_id}")
+def delete_match(match_id: int, db: Session = Depends(get_db)):
+    db_match = db.query(Match).filter(Match.id == match_id).first()
+    if db_match:
+        db.delete(db_match)
+        db.commit()
+    return {"message": "Deleted"}
+
+@app.get("/teams/leaderboard")
+def get_leaderboard(sport: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(Team)
+    if sport and sport != "All":
+        query = query.filter(Team.sport == sport)
+    teams = query.order_by(Team.points.desc()).all()
+    res = []
+    for t in teams:
+        res.append({
+            "team_name": t.name,
+            "wins": t.wins,
+            "draws": t.draws,
+            "losses": t.losses,
+            "points": t.points,
+            "id": t.id
+        })
+    return res
+
+@app.post("/ai/chat")
+def ai_chat(request: dict):
+    # Mock AI assistant because there is no API key provided
+    message = request.get("message", "")
+    return {"reply": "AI Assistant: You said '" + message + "'. I am ready to help you with your sport details!"}
+
