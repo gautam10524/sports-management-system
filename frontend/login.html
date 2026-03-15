@@ -153,7 +153,7 @@
   <script src="js/jquery-3.3.1.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script>
-    const API = "http://127.0.0.1:8000";
+    const API = window.location.origin;
 
     function toggleRegister(show) {
       document.getElementById('userLoginForm').style.display = show ? 'none' : 'block';
