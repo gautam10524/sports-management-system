@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import engine, Base
-from app.models import team_model, player_model, match_model, user_model
-from app.routes import teams, players, matches, auth
+from .database import engine, Base
+from .models import team_model, player_model, match_model, user_model
+from .routes import teams, players, matches, auth
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
@@ -24,17 +24,23 @@ app.include_router(players.router)
 app.include_router(matches.router)
 app.include_router(auth.router)
 
-static_path = os.path.join(os.path.dirname(__file__), "..", "static")
+# Use absolute paths for Vercel
+current_dir = os.path.dirname(os.path.abspath(__file__))
+static_path = os.path.join(current_dir, "..", "static")
 
 @app.get("/")
 def home():
-    return FileResponse(os.path.join(static_path, "login.html"))
+    login_file = os.path.join(static_path, "login.html")
+    if os.path.exists(login_file):
+        return FileResponse(login_file)
+    return {"message": "Sports Management System Backend Running", "static_path": static_path}
 
-# AI Chat endpoint (mock - no API key needed)
+# AI Chat endpoint
 @app.post("/ai/chat")
 def ai_chat(request: dict):
     message = request.get("message", "")
     return {"reply": "AI Assistant: You said '" + message + "'. I am ready to help you with your sport details!"}
 
-# Mount static files at root (AFTER API routes to avoid shadowing)
-app.mount("/", StaticFiles(directory=static_path, html=True), name="static")
+# Mount static files (at the end)
+if os.path.exists(static_path):
+    app.mount("/", StaticFiles(directory=static_path, html=True), name="static")

@@ -64,28 +64,25 @@ The frontend is a static application. It requires the backend to be running to f
 - **Backend**: Python 3.9+ with **FastAPI**.
 - **Database**: **SQLite3** (No separate installation required).
 
-## 🌐 One-Link Deployment (Render.com)
+## 🌐 One-Link Deployment (Vercel.com)
 
-To get a single working link for your project, follow these steps:
+Vercel is the fastest way to get a live, high-performance link for free.
 
 ### 1. Unified Structure
-I have already restructured the project so the **Backend now serves the Frontend**. This means you only need to deploy the backend to get a single working URL.
+I have added a `vercel.json` file to the project. This tells Vercel how to host both your Python Backend and your Glassmorphic Frontend together.
 
 ### 2. Deployment Steps
-1.  **Host on GitHub**: Push your current code (specifically the `backend/backend` folder) to a GitHub repository.
-2.  **Create Render Account**: Sign up at [Render.com](https://render.com).
-3.  **New Web Service**:
-    - Click **"New +"** -> **"Web Service"**.
+1.  **Push to GitHub**: Ensure all latest changes are pushed to your GitHub repo.
+2.  **Create Vercel Account**: Sign up at [Vercel.com](https://vercel.com) (use GitHub to login).
+3.  **Import Project**:
+    - Click **"Add New"** -> **"Project"**.
     - Connect your GitHub repository.
 4.  **Configure Settings**:
-    - **Name**: `sports-management-system`
+    - **Framework Preset**: Other (it will detect Python automatically).
     - **Root Directory**: `backend/backend`
-    - **Environment**: `Python 3`
-    - **Build Command**: `pip install -r requirements.txt`
-    - **Start Command**: `gunicorn -k uvicorn.workers.UvicornWorker app.main:app`
-5.  **Deploy**: Click **"Create Web Service"**.
+5.  **Deploy**: Click **"Deploy"**.
 
-Once finished, Render will provide a link (e.g., `https://sports-ms.onrender.com`). Clicking this link will open your application perfectly!
+Once finished, Vercel will give you a link like `https://sports-ms.vercel.app`. Your site will load instantly every time!
 
 ---
 
