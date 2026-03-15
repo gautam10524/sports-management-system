@@ -438,8 +438,10 @@
 
     async function loadLeaderboard() {
       const teams = await getLeaderboard();
+      // Filter out any entries that might have missing names (unlikely but safe)
+      const validTeams = teams.filter(t => t.team_name && t.team_name !== "-");
       let html = ""
-      teams.forEach((team, index) => {
+      validTeams.forEach((team, index) => {
         html += `
           <tr>
           <td>${index + 1}</td>
@@ -451,53 +453,75 @@
           </tr>
         `
       })
+      if (!html) html = `<tr><td colspan="6" class="text-center text-white-50">No rankings available</td></tr>`;
       document.getElementById("leaderboardTable").innerHTML = html
     }
 
     async function loadNextMatch() {
-      const matches = await getMatches();
-      if (matches.length === 0) {
-        document.getElementById("nextMatch").innerHTML = "No matches scheduled"
+      const allMatches = await getMatches();
+      // 1. Filter: Only matches where both teams exist in our current database
+      // 2. Filter: Only future or today's matches (optional, but requested "next match")
+      // 3. Sort: By date ascending
+      const validMatches = allMatches.filter(m => teamsMap[m.team1_id] && teamsMap[m.team2_id])
+        .sort((a,b) => new Date(a.match_date) - new Date(b.match_date));
+      
+      const futureMatches = validMatches.filter(m => !m.winner); // unfinished matches
+
+      if (futureMatches.length === 0) {
+        document.getElementById("nextMatch").innerHTML = "<p class='text-white-50'>No upcoming matches scheduled</p>"
         return
       }
-      const m = matches[0]
-      const team1 = teamsMap[m.team1_id] || "-"
-      const team2 = teamsMap[m.team2_id] || "-"
+      
+      const m = futureMatches[0]
+      const team1 = teamsMap[m.team1_id]
+      const team2 = teamsMap[m.team2_id]
       document.getElementById("nextMatch").innerHTML = `
-        <h3>${team1} VS ${team2}</h3>
-        <p>${m.match_date}</p>
+        <h3 class="text-white">${team1} VS ${team2}</h3>
+        <p class="mb-0" style="color:rgba(255,255,255,0.7);">📅 ${m.match_date}</p>
+        <p class="small text-white-50">📍 ${m.location || "Main Stadium"}</p>
       `
     }
 
     async function loadRecentMatches() {
-      const matches = await getMatches();
+      const allMatches = await getMatches();
+      // Filter for matches that have a winner (completed) and valid teams
+      const validCompleted = allMatches.filter(m => m.winner && teamsMap[m.team1_id] && teamsMap[m.team2_id])
+        .sort((a,b) => new Date(b.match_date) - new Date(a.match_date)); // Recent first
+
       let html = ""
-      matches.slice(0, 6).forEach(m => {
-        const team1 = teamsMap[m.team1_id] || "-"
-        const team2 = teamsMap[m.team2_id] || "-"
-        const winnerName = m.winner ? (teamsMap[m.winner] || "-") : "Pending"
+      validCompleted.slice(0, 6).forEach(m => {
+        const team1 = teamsMap[m.team1_id]
+        const team2 = teamsMap[m.team2_id]
+        const winnerName = m.winner === "Draw" ? "Draw" : (teamsMap[m.winner] || "-")
         html += `
           <div class="col-lg-4">
             <div class="glass-card text-white mb-3">
               <h5>${team1} vs ${team2}</h5>
               <p class="mb-1" style="color:rgba(255,255,255,0.6);">📅 ${m.match_date || "-"}</p>
-              <p class="mb-0"><strong style="color:${m.winner ? '#4caf50' : '#ff9800'};">${m.winner ? '🏆 Winner: ' + winnerName : '⏳ ' + winnerName}</strong></p>
+              <p class="mb-0"><strong style="color:${m.winner !== 'Draw' ? '#ffc107' : '#00bcd4'};">${m.winner === 'Draw' ? '🤝 Draw' : '🏆 Winner: ' + winnerName}</strong></p>
             </div>
           </div>
         `
       })
-      if (!html) html = `<div class="col-12"><div class="glass-card text-center text-white-50">No recent matches.</div></div>`;
+      if (!html) html = `<div class="col-12"><div class="glass-card text-center text-white-50">No completed matches in database.</div></div>`;
       document.getElementById("recentMatches").innerHTML = html
     }
 
     async function loadTopPlayers() {
       const players = await getPlayers();
-      const awardPlayers = players.filter(p => p.awards && p.awards.trim().length > 0)
+      // Filter: Players who have a valid team in the database (or no team if allowed)
+      // And must have awards
+      const awardPlayers = players.filter(p => {
+        const teamValid = !p.team_id || teamsMap[p.team_id];
+        return teamValid && p.awards && p.awards.trim().length > 0;
+      })
+      
       let html = ""
       if (awardPlayers.length === 0) {
-        html = `<div class="col-12"><div class="glass-card text-center text-white-50">No award-winning players yet.</div></div>`
+        html = `<div class="col-12"><div class="glass-card text-center text-white-50">No award-winning players in database.</div></div>`
       } else {
         awardPlayers.slice(0, 6).forEach(p => {
+          const teamName = teamsMap[p.team_id] || "Free Agent";
           html += `
             <div class="col-lg-4">
               <div class="glass-card text-white mb-3">
@@ -508,7 +532,7 @@
                     <small style="color:rgba(255,255,255,0.5);">${p.position || "Player"}</small>
                   </div>
                 </div>
-                <p class="mb-1" style="color:rgba(255,255,255,0.6);">Team: ${teamsMap[p.team_id] || "Unassigned"}</p>
+                <p class="mb-1" style="color:rgba(255,255,255,0.6);">Team: ${teamName}</p>
                 <p class="mb-0" style="color:#ffc107;font-weight:600;">🏆 ${p.awards}</p>
               </div>
             </div>
