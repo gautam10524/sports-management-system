@@ -417,7 +417,7 @@
     function getDisplayNameForTeam(teamId) {
       if (!teamId) return "-";
       const team = state.teamsById[String(teamId)];
-      if (!team) return "Unknown Team";
+      if (!team) return "";
       
       const sport = (team.sport || "").toLowerCase();
       if (sport.includes("tennis") || sport.includes("badminton") || sport.includes("table")) {
@@ -551,7 +551,7 @@
       const sportPoints = {};
       state.matches.forEach(m => {
         if (m.winner) {
-          const s = (teamSport(m.team1_id) || m.sport || "Unknown").toLowerCase();
+          const s = (teamSport(m.team1_id) || m.sport || "-").toLowerCase();
           if (!sportPoints[s]) sportPoints[s] = {};
           sportPoints[s][m.winner] = (sportPoints[s][m.winner] || 0) + 3;
         }

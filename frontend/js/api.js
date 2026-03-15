@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8000"
+const API = window.location.origin; // Dynamically use the current host
 
 function getSportFilter() {
   const isAdmin = localStorage.getItem("is_admin") === "true";

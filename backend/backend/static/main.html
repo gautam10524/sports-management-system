@@ -815,7 +815,7 @@
     function teamNameById(teamId) {
       if (!teamId) return "-";
       const t = state.teams.find(x => String(x.id) === String(teamId));
-      return t?.name ?? "Unknown Team";
+      return t?.name ?? "-";
     }
 
     function openTeamDetails(id) {

@@ -597,7 +597,7 @@
       }
 
       tbody.innerHTML = filteredPlayers.map(p => {
-        const teamName = p.team_id ? (state.teamsById[String(p.team_id)]?.name ?? "Unknown Team") : "—";
+        const teamName = p.team_id ? (state.teamsById[String(p.team_id)]?.name ?? "-") : "—";
         const teamSport = p.team_id ? (state.teamsById[String(p.team_id)]?.sport ?? "") : "";
         const teamBadge = p.team_id
           ? `<span class="badge-soft">${escapeHtml(teamName)}</span><div class="muted" style="font-size:.85rem;margin-top:.25rem;">${escapeHtml(teamSport)}</div>`

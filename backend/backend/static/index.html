@@ -461,8 +461,8 @@
         return
       }
       const m = matches[0]
-      const team1 = teamsMap[m.team1_id] || "Unknown Team"
-      const team2 = teamsMap[m.team2_id] || "Unknown Team"
+      const team1 = teamsMap[m.team1_id] || "-"
+      const team2 = teamsMap[m.team2_id] || "-"
       document.getElementById("nextMatch").innerHTML = `
         <h3>${team1} VS ${team2}</h3>
         <p>${m.match_date}</p>
@@ -473,9 +473,9 @@
       const matches = await getMatches();
       let html = ""
       matches.slice(0, 6).forEach(m => {
-        const team1 = teamsMap[m.team1_id] || "Unknown Team"
-        const team2 = teamsMap[m.team2_id] || "Unknown Team"
-        const winnerName = m.winner ? (teamsMap[m.winner] || "Unknown Team") : "Pending"
+        const team1 = teamsMap[m.team1_id] || "-"
+        const team2 = teamsMap[m.team2_id] || "-"
+        const winnerName = m.winner ? (teamsMap[m.winner] || "-") : "Pending"
         html += `
           <div class="col-lg-4">
             <div class="glass-card text-white mb-3">
