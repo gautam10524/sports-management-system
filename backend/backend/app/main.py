@@ -7,7 +7,22 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
 
+from sqlalchemy import text
+
+# Create tables
 Base.metadata.create_all(bind=engine)
+
+# Auto-migration for missing columns
+def apply_migrations():
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE teams ADD COLUMN IF NOT EXISTS captain_id VARCHAR;"))
+            conn.commit()
+            print("Migration: captain_id column verified/added.")
+        except Exception as e:
+            print(f"Migration error: {e}")
+
+apply_migrations()
 
 app = FastAPI()
 
