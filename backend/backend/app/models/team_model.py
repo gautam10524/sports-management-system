@@ -10,3 +10,4 @@ class Team(Base):
     name = Column(String, nullable=False)
     coach = Column(String, nullable=False)
     sport = Column(String, nullable=False)
+    captain_id = Column(String, nullable=True)

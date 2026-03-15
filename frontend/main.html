@@ -400,6 +400,7 @@
                       <div class="text-muted">Points</div>
                       <div id="detailsPoints">0</div>
                     </div>
+                    <div id="detailsCaptainArea"></div>
                     <div class="d-flex justify-content-between py-1">
                       <div class="text-muted">Roster</div>
                       <div id="detailsRoster">0 / 0</div>
@@ -458,6 +459,33 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assign Captain Modal -->
+    <div class="modal fade" id="captainModal" tabindex="-1" role="dialog" aria-labelledby="captainModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modal-dark" style="border-radius: 14px;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="captainModalTitle">Assign Captain</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p id="captainModalDesc" class="muted mb-3">Select a player to lead this team.</p>
+            <div class="form-group">
+              <label for="captainPlayerSelect" class="mb-1">Select Player</label>
+              <select id="captainPlayerSelect" class="form-control custom-select">
+                <option value="" selected disabled>Loading players...</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button id="assignCaptainConfirmBtn" type="button" class="btn btn-primary" onclick="submitAssignCaptain()">Assign</button>
           </div>
         </div>
       </div>
@@ -690,6 +718,14 @@
               <div class="d-flex admin-only" style="gap:.5rem; flex-wrap:wrap;">
                 <button class="btn btn-warning btn-sm btn-icon" onclick="openEdit('${id}')">Edit</button>
                 <button class="btn btn-danger btn-sm btn-icon" onclick="openDelete('${id}')">Delete</button>
+                ${(function() {
+                  const capSports = ['basketball', 'football', 'soccer', 'cricket', 'rugby', 'volleyball'];
+                  const s = (team.sport || "").toLowerCase();
+                  if (capSports.includes(s) && !team.captain_id) {
+                    return `<button class="btn btn-outline-info btn-sm btn-icon" onclick="openAssignCaptain('${id}')">Assign Captain</button>`;
+                  }
+                  return "";
+                })()}
               </div>
             </td>
           </tr>
@@ -904,7 +940,66 @@
       }
 
       document.getElementById("detailsTeamId").value = String(team.id);
+      
+      const captainArea = document.getElementById("detailsCaptainArea");
+      if (captainArea) {
+          if (team.captain_id) {
+              const cap = players.find(p => String(p.id) === String(team.captain_id));
+              captainArea.innerHTML = `<div class="d-flex justify-content-between py-1">
+                  <div class="text-muted">Captain</div>
+                  <div class="badge-soft" style="color:#ffc107;">⭐ ${cap ? escapeHtml(cap.name) : 'Assigned'}</div>
+              </div>`;
+          } else {
+              captainArea.innerHTML = "";
+          }
+      }
+
       $("#teamDetailsModal").modal("show");
+    }
+
+    let globalActiveTeamId = null;
+    function openAssignCaptain(id) {
+        globalActiveTeamId = id;
+        const team = state.teams.find(t => String(t.id) === String(id));
+        if (!team) return;
+        
+        document.getElementById("captainModalTitle").innerText = `Assign Captain - ${team.name}`;
+        const players = playersForTeam(id);
+        const sel = document.getElementById("captainPlayerSelect");
+        
+        if (players.length === 0) {
+            sel.innerHTML = `<option value="" disabled>No players in team yet</option>`;
+            document.getElementById("assignCaptainConfirmBtn").disabled = true;
+        } else {
+            sel.innerHTML = `<option value="" selected disabled>Select a leader</option>` + 
+                players.map(p => `<option value="${p.id}">${escapeHtml(p.name)} (${escapeHtml(p.position)})</option>`).join("");
+            document.getElementById("assignCaptainConfirmBtn").disabled = false;
+        }
+        
+        $("#captainModal").modal("show");
+    }
+
+    async function submitAssignCaptain() {
+        const playerId = document.getElementById("captainPlayerSelect").value;
+        if (!playerId) return showAlert("warning", "Please select a player.");
+        
+        const btn = document.getElementById("assignCaptainConfirmBtn");
+        btn.disabled = true;
+        btn.innerText = "Assigning...";
+        
+        try {
+            await apiFetch(`/teams/${encodeURIComponent(globalActiveTeamId)}/assign-captain/${encodeURIComponent(playerId)}`, {
+                method: "PUT"
+            });
+            showAlert("success", "Captain assigned!");
+            $("#captainModal").modal("hide");
+            await refresh();
+        } catch (e) {
+            showAlert("danger", "Failed to assign captain: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Assign";
+        }
     }
 
     async function assignPlayerToTeam() {

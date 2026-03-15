@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -193,13 +193,36 @@ def team_details(team_id: str, db: Session = Depends(get_db)):
             matches_won += 1
             points += 3
 
+    captain_name = "-"
+    if team.captain_id:
+        cap = db.query(Player).filter(Player.id == team.captain_id).first()
+        if cap:
+            captain_name = cap.name
+
     return {
         "team_id": team.id,
         "team_name": team.name,
         "coach": team.coach,
         "sport": team.sport,
+        "captain_id": team.captain_id,
+        "captain_name": captain_name,
         "players": players,
         "matches_played": matches_played,
         "matches_won": matches_won,
         "points": points
     }
+
+@router.put("/{team_id}/assign-captain/{player_id}")
+def assign_captain(team_id: str, player_id: str, db: Session = Depends(get_db)):
+    team = db.query(Team).filter(Team.id == team_id).first()
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found")
+    
+    player = db.query(Player).filter(Player.id == player_id, Player.team_id == team_id).first()
+    if not player:
+        raise HTTPException(status_code=404, detail="Player not found or not in team")
+    
+    team.captain_id = player_id
+    db.commit()
+    db.refresh(team)
+    return {"message": "Captain assigned successfully", "team_id": team_id, "captain_id": player_id}
