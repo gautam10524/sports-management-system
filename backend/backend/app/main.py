@@ -26,6 +26,9 @@ def apply_migrations():
             # Check for columns in players table
             conn.execute(text("ALTER TABLE players ADD COLUMN IF NOT EXISTS sport VARCHAR;"))
             conn.execute(text("ALTER TABLE players ADD COLUMN IF NOT EXISTS user_id VARCHAR;"))
+
+            # Check for columns in matches table
+            conn.execute(text("ALTER TABLE matches ADD COLUMN IF NOT EXISTS mode VARCHAR DEFAULT 'Doubles';"))
             
             conn.commit()
             print("Migration: columns verified/added.")
