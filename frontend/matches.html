@@ -645,8 +645,11 @@
       const label1 = document.getElementById("label1");
       const label2 = document.getElementById("label2");
       
-      // Get unique sports
-      const sports = [...new Set(state.teams.map(t => (t.sport || "Other").toLowerCase()))];
+      // Get unique sports from both teams and players
+      const teamSports = state.teams.map(t => (t.sport || "").toLowerCase());
+      const playerSports = state.players.map(p => (p.sport || "").toLowerCase());
+      const sports = [...new Set([...teamSports, ...playerSports])].filter(s => s);
+      
       sportSelect.innerHTML = `<option value="" selected disabled>Select sport</option>` + 
         sports.map(s => `<option value="${s}">${escapeHtml(s.charAt(0).toUpperCase() + s.slice(1))}</option>`).join("");
       
