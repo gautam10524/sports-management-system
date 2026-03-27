@@ -352,6 +352,19 @@
                 <textarea id="playerAwards" class="form-control" rows="2"
                   placeholder="MVPs, trophies, etc. (optional)"></textarea>
               </div>
+              <div class="form-group">
+                <label class="mb-1" for="playerSport">Enrolled Sport</label>
+                <select id="playerSport" class="form-control custom-select" onchange="updateTeamDropdown()">
+                  <option value="Football">Football</option>
+                  <option value="Basketball">Basketball</option>
+                  <option value="Cricket">Cricket</option>
+                  <option value="Soccer">Soccer</option>
+                  <option value="Badminton">Badminton</option>
+                  <option value="Tennis">Tennis</option>
+                  <option value="Rugby">Rugby</option>
+                  <option value="Volleyball">Volleyball</option>
+                </select>
+              </div>
               <div class="form-group mb-0">
                 <label class="mb-1" for="playerTeam">Team (optional)</label>
                 <select id="playerTeam" class="form-control custom-select">
@@ -635,9 +648,18 @@
       }).join("");
     }
 
-    function renderTeamOptions(selectEl, currentTeamId) {
+    function renderTeamOptions(selectEl, currentTeamId, playerSport) {
       const opts = [`<option value="" ${!currentTeamId ? "selected" : ""}>No team</option>`];
+      const normalizedPlayerSport = normalizeSport(playerSport);
+      
       state.teams.forEach(t => {
+        const teamSport = normalizeSport(t.sport);
+        
+        // Filter by sport: only show teams of the same sport as the player
+        if (normalizedPlayerSport && teamSport && normalizedPlayerSport !== teamSport) {
+          return;
+        }
+
         const id = String(t.id);
         const maxP = maxPlayersForTeam(id);
         const count = playersInTeam(id).length;
@@ -649,6 +671,13 @@
       selectEl.innerHTML = opts.join("");
     }
 
+    function updateTeamDropdown() {
+      const sport = document.getElementById("playerSport").value;
+      const teamSelect = document.getElementById("playerTeam");
+      const currentTeamId = teamSelect.value;
+      renderTeamOptions(teamSelect, currentTeamId, sport);
+    }
+
     function openCreatePlayer() {
       document.getElementById("playerModalTitle").innerText = "New Player";
       document.getElementById("playerId").value = "";
@@ -656,7 +685,11 @@
       document.getElementById("playerPosition").value = "";
       document.getElementById("playerHistory").value = "";
       document.getElementById("playerAwards").value = "";
-      renderTeamOptions(document.getElementById("playerTeam"), "");
+      
+      const currentFilter = getSportFilter();
+      document.getElementById("playerSport").value = currentFilter !== "All" ? currentFilter : "Football";
+      
+      renderTeamOptions(document.getElementById("playerTeam"), "", document.getElementById("playerSport").value);
       $("#playerModal").modal("show");
       window.setTimeout(() => document.getElementById("playerName").focus(), 150);
     }
@@ -670,7 +703,15 @@
       document.getElementById("playerPosition").value = p.position ?? "";
       document.getElementById("playerHistory").value = p.history ?? "";
       document.getElementById("playerAwards").value = p.awards ?? "";
-      renderTeamOptions(document.getElementById("playerTeam"), p.team_id ?? "");
+      
+      // Determine player sport (either from field or from current team)
+      let pSport = p.sport;
+      if (!pSport && p.team_id) {
+        pSport = state.teamsById[String(p.team_id)]?.sport;
+      }
+      document.getElementById("playerSport").value = pSport || "Football";
+      
+      renderTeamOptions(document.getElementById("playerTeam"), p.team_id ?? "", document.getElementById("playerSport").value);
       $("#playerModal").modal("show");
       window.setTimeout(() => document.getElementById("playerName").focus(), 150);
     }
@@ -689,6 +730,7 @@
       const position = document.getElementById("playerPosition").value.trim();
       const history = document.getElementById("playerHistory").value.trim();
       const awards = document.getElementById("playerAwards").value.trim();
+      const sport = document.getElementById("playerSport").value;
       const teamId = document.getElementById("playerTeam").value;
 
       if (!name || !position) {
@@ -713,14 +755,14 @@
           await apiFetch("/players/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, position, team_id: teamId || null, history, awards })
+            body: JSON.stringify({ name, position, sport, team_id: teamId || null, history, awards })
           });
           showAlert("success", "Player created.");
         } else {
           await apiFetch("/players/" + encodeURIComponent(id), {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, position, team_id: teamId || null, history, awards })
+            body: JSON.stringify({ name, position, sport, team_id: teamId || null, history, awards })
           });
           showAlert("success", "Player updated.");
         }
