@@ -441,11 +441,22 @@
       }
       
       let winnerText = "";
-      if (m.winner) {
+      if (m.winner === "Aborted") {
+        winnerText = `<div class="mt-2 text-danger" style="font-weight:bold;">Status: Aborted</div>`;
+      } else if (m.winner) {
         let winName = getDisplayNameForTeam(m.winner);
         winnerText = `<div class="mt-2 text-success" style="font-weight:bold;">Winner: ${escapeHtml(winName)}</div>`;
       } else if (isHistory) {
         winnerText = `<div class="mt-2 text-warning" style="font-weight:bold;">Draw/Pending</div>`;
+      }
+
+      let adminControls = "";
+      if (!m.winner && !isHistory) {
+        adminControls = `
+          <div class="mt-3 admin-only">
+            <button class="btn btn-outline-danger btn-sm" onclick="abortMatchUI('${m.id}')" style="border-radius:20px; font-size:0.75rem; padding: 2px 10px;">Abort Match</button>
+          </div>
+        `;
       }
 
       return `
@@ -470,8 +481,9 @@
                 <span class="d-block">${escapeHtml(formatDate(m.match_date))} • ${escapeHtml(formatTime(m.match_date))}</span>
                 <strong class="text-primary">${venue}</strong>
               </p>
-              ${scoreText}
-              ${winnerText}
+               ${scoreText}
+               ${winnerText}
+               ${adminControls}
             </div>
           </div>
         </div>
@@ -697,6 +709,17 @@
         showAlert("danger", `Failed: ${e.message}`);
       } finally {
         btn.disabled = false;
+      }
+    }
+
+    async function abortMatchUI(id) {
+      if (!confirm("Are you sure you want to abort this match? This will mark it as cancelled.")) return;
+      try {
+        await apiFetch(`/matches/${id}/abort`, { method: "PUT" });
+        showAlert("success", "Match aborted successfully.");
+        await refresh();
+      } catch (e) {
+        showAlert("danger", `Failed to abort match: ${e.message}`);
       }
     }
 

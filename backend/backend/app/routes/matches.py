@@ -91,6 +91,21 @@ def update_match_result(match_id: str, score1: int, score2: int, db: Session = D
     return match
 
 
+@router.put("/{match_id}/abort")
+def abort_match(match_id: str, db: Session = Depends(get_db)):
+    match = db.query(Match).filter(Match.id == match_id).first()
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
+    
+    match.winner = "Aborted"
+    match.score_team1 = 0
+    match.score_team2 = 0
+    
+    db.commit()
+    db.refresh(match)
+    return match
+
+
 @router.delete("/{match_id}")
 def delete_match(match_id: str, db: Session = Depends(get_db)):
 
