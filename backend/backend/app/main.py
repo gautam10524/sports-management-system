@@ -14,8 +14,8 @@ Base.metadata.create_all(bind=engine)
 
 # Auto-migration for missing columns
 def apply_migrations():
-    with engine.connect() as conn:
-        try:
+    try:
+        with engine.begin() as conn:
             # Check for captain_id column in teams
             conn.execute(text("ALTER TABLE teams ADD COLUMN IF NOT EXISTS captain_id VARCHAR;"))
             
@@ -30,10 +30,9 @@ def apply_migrations():
             # Check for columns in matches table
             conn.execute(text("ALTER TABLE matches ADD COLUMN IF NOT EXISTS mode VARCHAR DEFAULT 'Doubles';"))
             
-            conn.commit()
             print("Migration: columns verified/added.")
-        except Exception as e:
-            print(f"Migration error: {e}")
+    except Exception as e:
+        print(f"Migration error: {e}")
 
 apply_migrations()
 

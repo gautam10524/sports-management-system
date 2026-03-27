@@ -16,7 +16,7 @@ class Match(BaseModel):
     location: str
     score_team1: int = 0
     score_team2: int = 0
-    winner: str = None
+    winner: str | None = None
     mode: str = "Doubles"
     
     class Config:
