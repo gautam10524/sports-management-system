@@ -14,3 +14,4 @@ class User(Base):
     sport = Column(String, nullable=True)  # for players
     age = Column(Integer, nullable=True)
     dob = Column(String, nullable=True)
+    status = Column(String, default="pending")  # pending, accepted, rejected

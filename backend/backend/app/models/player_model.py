@@ -10,7 +10,9 @@ class Player(Base):
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     position = Column(String, nullable=False)
+    sport = Column(String, nullable=True)
     history = Column(String, default="")
     awards = Column(String, default="")
 
     team_id = Column(String, ForeignKey("teams.id"))
+    user_id = Column(String, ForeignKey("users.id"), nullable=True)

@@ -16,9 +16,19 @@ Base.metadata.create_all(bind=engine)
 def apply_migrations():
     with engine.connect() as conn:
         try:
+            # Check for captain_id column in teams
             conn.execute(text("ALTER TABLE teams ADD COLUMN IF NOT EXISTS captain_id VARCHAR;"))
+            
+            # Check for columns in users table
+            conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR DEFAULT 'pending';"))
+            conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS dob VARCHAR;"))
+            
+            # Check for columns in players table
+            conn.execute(text("ALTER TABLE players ADD COLUMN IF NOT EXISTS sport VARCHAR;"))
+            conn.execute(text("ALTER TABLE players ADD COLUMN IF NOT EXISTS user_id VARCHAR;"))
+            
             conn.commit()
-            print("Migration: captain_id column verified/added.")
+            print("Migration: columns verified/added.")
         except Exception as e:
             print(f"Migration error: {e}")
 

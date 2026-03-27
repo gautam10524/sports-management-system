@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 
 from app.database import get_db
 from app.models.player_model import Player
@@ -60,7 +61,13 @@ def create_player(player: PlayerCreate, db: Session = Depends(get_db)):
 def get_players(sport: str = "All", db: Session = Depends(get_db)):
     query = db.query(Player)
     if sport != "All":
-        query = query.join(Team).filter(Team.sport.ilike(sport))
+        # Check both player.sport and team.sport (for players already in teams)
+        query = query.outerjoin(Team).filter(
+            or_(
+                Player.sport.ilike(sport),
+                Team.sport.ilike(sport)
+            )
+        )
     return query.all()
 
 
@@ -92,6 +99,14 @@ def update_player(player_id: str, player: PlayerUpdate, db: Session = Depends(ge
     db.refresh(existing_player)
 
     return existing_player
+
+
+@router.get("/{player_id}")
+def get_player(player_id: str, db: Session = Depends(get_db)):
+    player = db.query(Player).filter(Player.id == player_id).first()
+    if not player:
+        raise HTTPException(status_code=404, detail="Player not found")
+    return player
 
 
 @router.delete("/{player_id}")
