@@ -18,3 +18,4 @@ class Match(Base):
     score_team2 = Column(Integer, default=0)
 
     winner = Column(String)
+    mode = Column(String, default="Doubles")

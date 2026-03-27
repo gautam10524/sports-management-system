@@ -920,13 +920,14 @@
       setHtml("detailsUpcomingMatches", upcoming.length ? upcoming.map(renderMatchRow).join("") : `<div class="text-muted">No upcoming matches.</div>`);
       setHtml("detailsMatchHistory", history.length ? history.map(renderMatchRow).join("") : `<div class="text-muted">No match history yet.</div>`);
 
-      // Assignment dropdown: only players not currently in this team
+      // Assignment dropdown: only players not currently in any team and same sport
       const availablePlayers = state.players
-        .filter(p => String(p.team_id ?? "") !== String(team.id))
+        .filter(p => !p.team_id)
+        .filter(p => (p.sport || "").toLowerCase() === (team.sport || "").toLowerCase())
         .filter(p => p.name);
 
       const options = availablePlayers.length
-        ? availablePlayers.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}${p.team_id ? ` (from ${escapeHtml(teamNameById(p.team_id))})` : ""}</option>`).join("")
+        ? availablePlayers.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join("")
         : `<option value="" disabled>No available players</option>`;
 
       const sel = document.getElementById("assignPlayerSelectEl");

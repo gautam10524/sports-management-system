@@ -298,6 +298,13 @@
             <label>Sport</label>
             <select id="sportSelect" class="form-control custom-select"></select>
           </div>
+          <div class="form-group" id="matchModeGroup" style="display:none;">
+            <label>Match Type</label>
+            <select id="matchMode" class="form-control custom-select">
+              <option value="Doubles" selected>Doubles (Teams)</option>
+              <option value="Singles">Singles (Players)</option>
+            </select>
+          </div>
           <div class="form-group">
             <label id="label1">Team 1</label>
             <select id="team1Select" class="form-control custom-select"></select>
@@ -414,25 +421,28 @@
       });
     }
 
-    function getDisplayNameForTeam(teamId) {
-      if (!teamId) return "-";
-      const team = state.teamsById[String(teamId)];
-      if (!team) return "";
+    function getDisplayNameForEntity(id, mode) {
+      if (!id) return "-";
+      if (mode === "Singles") {
+        const p = state.players.find(x => String(x.id) === String(id));
+        return p ? p.name : id;
+      }
+      const team = state.teamsById[String(id)];
+      if (!team) return id;
       
       const sport = (team.sport || "").toLowerCase();
       if (sport.includes("tennis") || sport.includes("badminton") || sport.includes("table")) {
-        const players = state.playersByTeam[String(teamId)];
-        if (players && players.length > 0) {
-          return players[0].name; 
-        }
+        // For individual sports, show players if it's a small roster?
+        // But the user said for Doubles we have team names.
+        return team.name;
       }
       return team.name;
     }
 
     function renderMatchRowUI(m, isHistory=false) {
-      const t1 = escapeHtml(getDisplayNameForTeam(m.team1_id));
-      const t2 = escapeHtml(getDisplayNameForTeam(m.team2_id));
-      const sport = escapeHtml(teamSport(m.team1_id) || teamSport(m.team2_id) || m.sport || "-");
+      const t1 = escapeHtml(getDisplayNameForEntity(m.team1_id, m.mode));
+      const t2 = escapeHtml(getDisplayNameForEntity(m.team2_id, m.mode));
+      const sport = escapeHtml(m.sport || teamSport(m.team1_id) || teamSport(m.team2_id) || "-");
       const venue = escapeHtml(m.location ?? "TBD");
       
       let scoreText = "";
@@ -444,7 +454,7 @@
       if (m.winner === "Aborted") {
         winnerText = `<div class="mt-2 text-danger" style="font-weight:bold;">Status: Aborted</div>`;
       } else if (m.winner) {
-        let winName = getDisplayNameForTeam(m.winner);
+        let winName = getDisplayNameForEntity(m.winner, m.mode);
         winnerText = `<div class="mt-2 text-success" style="font-weight:bold;">Winner: ${escapeHtml(winName)}</div>`;
       } else if (isHistory) {
         winnerText = `<div class="mt-2 text-warning" style="font-weight:bold;">Draw/Pending</div>`;
@@ -476,7 +486,7 @@
               </div>
             </div>
             <div class="text-center widget-vs-contents mt-3 mb-0">
-              <h4 class="text-white">${sport}</h4>
+              <h4 class="text-white">${sport} <span class="badge-soft" style="font-size:0.7rem;">${m.mode || 'Doubles'}</span></h4>
               <p class="mb-0 text-white-50">
                 <span class="d-block">${escapeHtml(formatDate(m.match_date))} • ${escapeHtml(formatTime(m.match_date))}</span>
                 <strong class="text-primary">${venue}</strong>
@@ -508,8 +518,8 @@
       const filterText = (document.getElementById("matchSearch")?.value || "").toLowerCase();
       
       const filteredMatches = state.matches.filter(m => {
-        const t1 = getDisplayNameForTeam(m.team1_id).toLowerCase();
-        const t2 = getDisplayNameForTeam(m.team2_id).toLowerCase();
+        const t1 = getDisplayNameForEntity(m.team1_id, m.mode).toLowerCase();
+        const t2 = getDisplayNameForEntity(m.team2_id, m.mode).toLowerCase();
         const s = (teamSport(m.team1_id) || m.sport || "").toLowerCase();
         return t1.includes(filterText) || t2.includes(filterText) || s.includes(filterText);
       });
@@ -640,24 +650,42 @@
       sportSelect.innerHTML = `<option value="" selected disabled>Select sport</option>` + 
         sports.map(s => `<option value="${s}">${escapeHtml(s.charAt(0).toUpperCase() + s.slice(1))}</option>`).join("");
       
-      select1.innerHTML = `<option value="" selected disabled>Select sport first</option>`;
       select2.innerHTML = `<option value="" selected disabled>Select sport first</option>`;
       
+      const modeGroup = document.getElementById("matchModeGroup");
+      const modeSelect = document.getElementById("matchMode");
+
       sportSelect.onchange = function() {
         const sport = sportSelect.value;
         const individual = isIndividualSport(sport);
         
-        label1.innerText = individual ? "Player 1" : "Team 1";
-        label2.innerText = individual ? "Player 2" : "Team 2";
-        
         if (individual) {
+            modeGroup.style.display = "block";
+        } else {
+            modeGroup.style.display = "none";
+            modeSelect.value = "Doubles";
+        }
+        
+        renderParticipants();
+      };
+
+      modeSelect.onchange = renderParticipants;
+
+      function renderParticipants() {
+        const sport = sportSelect.value;
+        const mode = modeSelect.value;
+        const isSingles = mode === "Singles";
+        
+        label1.innerText = isSingles ? "Player 1" : "Team 1";
+        label2.innerText = isSingles ? "Player 2" : "Team 2";
+        
+        if (isSingles) {
           // Show players for this sport
-          const teamIds = state.teams.filter(t => (t.sport || "").toLowerCase() === sport).map(t => String(t.id));
-          const relevantPlayers = state.players.filter(p => teamIds.includes(String(p.team_id)));
+          const relevantPlayers = state.players.filter(p => (p.sport || "").toLowerCase() === sport);
           const playerOpts = `<option value="" selected disabled>Select player</option>` + 
             relevantPlayers.map(p => {
-              const tName = state.teamsById[String(p.team_id)]?.name || "";
-              return `<option value="${p.team_id}" data-player="${escapeHtml(p.name)}">${escapeHtml(p.name)} (${escapeHtml(tName)})</option>`;
+              const tName = state.teamsById[String(p.team_id)]?.name || "No Team";
+              return `<option value="${p.id}">${escapeHtml(p.name)} (${escapeHtml(tName)})</option>`;
             }).join("");
           select1.innerHTML = playerOpts;
           select2.innerHTML = playerOpts;
@@ -668,7 +696,7 @@
           select1.innerHTML = teamOpts;
           select2.innerHTML = teamOpts;
         }
-      };
+      }
     }
 
     async function saveMatch() {
@@ -677,30 +705,29 @@
       const match_date = document.getElementById("matchDate").value;
       const param_time = document.getElementById("matchTime").value;
       const location = document.getElementById("matchLocation").value;
+      const mode = document.getElementById("matchMode").value;
+      const sport = document.getElementById("sportSelect").value;
 
       if (!team1_id || !team2_id || !match_date || !param_time || !location) {
          showAlert("warning", "All fields are required.");
          return;
       }
       if (team1_id === team2_id) {
-         showAlert("warning", "Teams must be different.");
+         showAlert("warning", (mode === "Singles" ? "Players" : "Teams") + " must be different.");
          return;
       }
 
       const dt = `${match_date}T${param_time}:00`;
 
-      if (hasTeamConflict(team1_id, dt) || hasTeamConflict(team2_id, dt)) {
-         showAlert("warning", "One of the teams already has a match at this time.");
-         return;
-      }
-
+      // Simplified conflict check for now
+      
       const btn = document.getElementById("saveMatchBtn");
       btn.disabled = true;
       try {
         await apiFetch("/matches/", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({ team1_id, team2_id, match_date: dt, location })
+          body: JSON.stringify({ team1_id, team2_id, match_date: dt, location, mode, sport })
         });
         showAlert("success", "Match scheduled!");
         $("#matchModal").modal("hide");

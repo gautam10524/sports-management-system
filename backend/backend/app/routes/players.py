@@ -98,6 +98,9 @@ def update_player(player_id: str, player: PlayerUpdate, db: Session = Depends(ge
     current_sport = update_data.get("sport") or existing_player.sport
     
     if new_team_id is not None and new_team_id != "" and new_team_id != existing_player.team_id:
+        if existing_player.team_id:
+             raise HTTPException(status_code=400, detail="Player is already assigned to another team. Remove them first.")
+        
         team = db.query(Team).filter(Team.id == new_team_id).first()
         if not team:
             raise HTTPException(status_code=404, detail="Team not found")

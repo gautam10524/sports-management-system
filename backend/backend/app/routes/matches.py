@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from app.database import get_db
 from app.models.match_model import Match
 from app.models.team_model import Team
+from app.models.player_model import Player
 from app.schemas.match_schema import MatchCreate
 
 router = APIRouter(prefix="/matches", tags=["Matches"])
@@ -13,18 +14,29 @@ router = APIRouter(prefix="/matches", tags=["Matches"])
 @router.post("/")
 def create_match(match: MatchCreate, db: Session = Depends(get_db)):
     if match.team1_id == match.team2_id:
-        raise HTTPException(status_code=400, detail="A team cannot play against itself.")
+        raise HTTPException(status_code=400, detail="A team or player cannot play against itself.")
 
-    team1 = db.query(Team).filter(Team.id == match.team1_id).first()
-    team2 = db.query(Team).filter(Team.id == match.team2_id).first()
+    if match.mode == "Singles":
+        # team1_id and team2_id are actually player IDs
+        p1 = db.query(Player).filter(Player.id == match.team1_id).first()
+        p2 = db.query(Player).filter(Player.id == match.team2_id).first()
+        if not p1 or not p2:
+            raise HTTPException(status_code=404, detail="One or both players not found.")
+        # Ensure they are the same sport
+        if (p1.sport or "").lower() != (p2.sport or "").lower():
+             raise HTTPException(status_code=400, detail="Players must be of the same sport for a match.")
+    else:
+        # Default is Doubles/Team match
+        team1 = db.query(Team).filter(Team.id == match.team1_id).first()
+        team2 = db.query(Team).filter(Team.id == match.team2_id).first()
 
-    if not team1 or not team2:
-        raise HTTPException(status_code=404, detail="One or both teams not found.")
+        if not team1 or not team2:
+            raise HTTPException(status_code=404, detail="One or both teams not found.")
 
-    if team1.sport.strip().lower() != team2.sport.strip().lower():
-        raise HTTPException(status_code=400, detail="Teams must play the same sport.")
+        if team1.sport.strip().lower() != team2.sport.strip().lower():
+            raise HTTPException(status_code=400, detail="Teams must play the same sport.")
 
-    # Check time overlap
+    # Check time overlap (simplified)
     conflict = db.query(Match).filter(
         Match.match_date == match.match_date,
         ((Match.team1_id == match.team1_id) | (Match.team2_id == match.team1_id) |
@@ -32,13 +44,14 @@ def create_match(match: MatchCreate, db: Session = Depends(get_db)):
     ).first()
 
     if conflict:
-        raise HTTPException(status_code=400, detail="One of the teams already has a match scheduled at this time.")
+        raise HTTPException(status_code=400, detail="One of the participants already has a match scheduled at this time.")
 
     new_match = Match(
         team1_id=match.team1_id,
         team2_id=match.team2_id,
         match_date=match.match_date,
-        location=match.location
+        location=match.location,
+        mode=match.mode
     )
 
     db.add(new_match)
