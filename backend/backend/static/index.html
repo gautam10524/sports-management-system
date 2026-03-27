@@ -52,6 +52,24 @@
     .glass-card:hover {
       transform: translateY(-3px);
     }
+
+    .admin-only-section {
+      display: none;
+    }
+
+    .player-request-card {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .request-info h5 { margin: 0; color: white; }
+    .request-info p { margin: 0; color: rgba(255,255,255,0.6); font-size: 0.9rem; }
   </style>
 
 </head>
@@ -90,6 +108,7 @@
                 <li><a href="matches.html" class="nav-link">Matches</a></li>
                 <li><a href="blog.html" class="nav-link">Leaderboard</a></li>
                 <li><a href="contact.html" class="nav-link">Contact</a></li>
+                <li id="logoutBtnArea"><a href="#" onclick="logout()" class="nav-link text-danger">Logout</a></li>
               </ul>
             </nav>
 
@@ -124,6 +143,22 @@
 
     </div>
 
+    <!-- ADMIN REQUESTS SECTION (Requirement #1 TASK BAR) -->
+    <div class="site-section admin-only-section" id="adminRequestsSection">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 title-section">
+            <h2 class="heading">Player Registration Requests (Task Bar)</h2>
+            <p class="text-white-50">Approve or decline players who have registered for specific sports.</p>
+          </div>
+        </div>
+        <div id="pendingRequestsList" class="row">
+            <!-- Requests will be injected here -->
+             <div class="col-12"><div class="glass-card text-center text-white-50">Loading requests...</div></div>
+        </div>
+      </div>
+    </div>
+
 
     <!-- DASHBOARD -->
 
@@ -142,28 +177,28 @@
         <div class="row text-center">
 
           <div class="col-lg-3">
-            <div class="p-4 bg-dark text-white">
+            <div class="p-4 bg-dark text-white glass-card mb-3">
               <h3 id="totalTeams">0</h3>
               <p>Total Teams</p>
             </div>
           </div>
 
           <div class="col-lg-3">
-            <div class="p-4 bg-dark text-white">
+            <div class="p-4 bg-dark text-white glass-card mb-3">
               <h3 id="totalPlayers">0</h3>
               <p>Total Players</p>
             </div>
           </div>
 
           <div class="col-lg-3">
-            <div class="p-4 bg-dark text-white">
+            <div class="p-4 bg-dark text-white glass-card mb-3">
               <h3 id="totalMatches">0</h3>
               <p>Total Matches</p>
             </div>
           </div>
 
           <div class="col-lg-3">
-            <div class="p-4 bg-dark text-white">
+            <div class="p-4 bg-dark text-white glass-card mb-3">
               <h3 id="topTeam">-</h3>
               <p>Top Team</p>
             </div>
@@ -377,16 +412,6 @@
             </div>
           </div>
         </div>
-        <div class="row text-center">
-          <div class="col-md-12">
-            <div class="pt-5">
-              <p>Copyright &copy;
-                <script>document.write(new Date().getFullYear());</script> Sports Management System. All rights
-                reserved.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </footer>
 
@@ -414,6 +439,11 @@
   <script>
     let teamsMap = {}
 
+    function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
+    }
+
     async function loadTeamsMap() {
       const teams = await getTeams()
       teams.forEach(t => {
@@ -436,9 +466,60 @@
       }
     }
 
+    async function loadPendingRequests() {
+        if (localStorage.getItem("is_admin") !== "true") return;
+        
+        try {
+            const res = await fetch("/users/pending");
+            const data = await res.json();
+            const list = document.getElementById("pendingRequestsList");
+            
+            if (data.length === 0) {
+                list.innerHTML = `<div class="col-12"><div class="glass-card text-center text-white-50">No pending requests</div></div>`;
+                return;
+            }
+            
+            let html = "";
+            data.forEach(req => {
+                html += `
+                <div class="col-lg-6 mb-3">
+                    <div class="player-request-card">
+                        <div class="request-info">
+                            <h5>${req.name}</h5>
+                            <p>Sport: ${req.sport} | Age: ${req.age} | DOB: ${req.dob}</p>
+                            <p class="small">${req.email}</p>
+                        </div>
+                        <div class="d-flex" style="gap:0.5rem;">
+                            <button class="btn btn-success btn-sm" onclick="handleRequest('${req.id}', 'approve')">Accept</button>
+                            <button class="btn btn-danger btn-sm" onclick="handleRequest('${req.id}', 'reject')">Decline</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+            list.innerHTML = html;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function handleRequest(userId, action) {
+        try {
+            const res = await fetch(`/users/${userId}/${action}`, { method: "POST" });
+            if (res.ok) {
+                alert(`Player ${action}ed successfully.`);
+                loadPendingRequests();
+                loadDashboard();
+            } else {
+                alert("Action failed.");
+            }
+        } catch (err) {
+            alert("Error connecting to server.");
+        }
+    }
+
     async function loadLeaderboard() {
       const teams = await getLeaderboard();
-      // Filter out any entries that might have missing names (unlikely but safe)
       const validTeams = teams.filter(t => t.team_name && t.team_name !== "-");
       let html = ""
       validTeams.forEach((team, index) => {
@@ -459,13 +540,10 @@
 
     async function loadNextMatch() {
       const allMatches = await getMatches();
-      // 1. Filter: Only matches where both teams exist in our current database
-      // 2. Filter: Only future or today's matches (optional, but requested "next match")
-      // 3. Sort: By date ascending
       const validMatches = allMatches.filter(m => teamsMap[m.team1_id] && teamsMap[m.team2_id])
         .sort((a,b) => new Date(a.match_date) - new Date(b.match_date));
       
-      const futureMatches = validMatches.filter(m => !m.winner); // unfinished matches
+      const futureMatches = validMatches.filter(m => !m.winner);
 
       if (futureMatches.length === 0) {
         document.getElementById("nextMatch").innerHTML = "<p class='text-white-50'>No upcoming matches scheduled</p>"
@@ -484,9 +562,8 @@
 
     async function loadRecentMatches() {
       const allMatches = await getMatches();
-      // Filter for matches that have a winner (completed) and valid teams
       const validCompleted = allMatches.filter(m => m.winner && teamsMap[m.team1_id] && teamsMap[m.team2_id])
-        .sort((a,b) => new Date(b.match_date) - new Date(a.match_date)); // Recent first
+        .sort((a,b) => new Date(b.match_date) - new Date(a.match_date));
 
       let html = ""
       validCompleted.slice(0, 6).forEach(m => {
@@ -509,8 +586,6 @@
 
     async function loadTopPlayers() {
       const players = await getPlayers();
-      // Filter: Players who have a valid team in the database (or no team if allowed)
-      // And must have awards
       const awardPlayers = players.filter(p => {
         const teamValid = !p.team_id || teamsMap[p.team_id];
         return teamValid && p.awards && p.awards.trim().length > 0;
@@ -543,17 +618,18 @@
     }
 
     async function init() {
-      // Update management labels for non-admins
-      if (localStorage.getItem("is_admin") !== "true") {
+      const isAdmin = localStorage.getItem("is_admin") === "true";
+      if (!isAdmin) {
         document.querySelectorAll(".glass-card h4").forEach(el => {
           if (el.innerText.includes("Manage")) {
             el.innerText = el.innerText.replace("Manage", "View");
           }
         });
-        document.querySelectorAll(".glass-card p").forEach(el => {
-            el.innerText = el.innerText.replace("Create", "Browse").replace("Add", "Look up").replace("Schedule", "Explore");
-        });
+      } else {
+        document.getElementById("adminRequestsSection").style.display = "block";
+        loadPendingRequests();
       }
+      
       await loadTeamsMap()
       loadDashboard()
       loadLeaderboard()
@@ -564,4 +640,5 @@
     init()
   </script>
 </body>
+
 </html>

@@ -87,6 +87,8 @@
         <p>Login to your account</p>
       </div>
 
+      <div id="alertArea"></div>
+
       <ul class="nav nav-tabs mb-4 justify-content-center" id="loginTabs" role="tablist">
         <li class="nav-item">
           <a class="nav-link active" id="user-tab" data-toggle="tab" href="#user" role="tab" aria-controls="user" aria-selected="true">User Login</a>
@@ -116,14 +118,21 @@
           <div id="userRegisterForm" style="display: none;">
             <h4 class="mb-3">Player Registration</h4>
             <div class="form-group"><input type="text" id="regName" class="form-control" placeholder="Full Name"></div>
-            <div class="form-group"><input type="number" id="regAge" class="form-control" placeholder="Age"></div>
-            <div class="form-group"><input type="date" id="regDob" class="form-control" placeholder="Date of Birth"></div>
             <div class="form-group">
+              <label class="small text-white-50 ml-1 mb-1">Date of Birth</label>
+              <input type="date" id="regDob" class="form-control" placeholder="Date of Birth">
+            </div>
+            <div class="form-group">
+              <label class="small text-white-50 ml-1 mb-1">Preferred Sport</label>
               <select id="regSport" class="form-control" style="background:#222;color:white;">
                 <option value="Football">Football</option>
                 <option value="Basketball">Basketball</option>
                 <option value="Tennis">Tennis</option>
                 <option value="Cricket">Cricket</option>
+                <option value="Soccer">Soccer</option>
+                <option value="Badminton">Badminton</option>
+                <option value="Rugby">Rugby</option>
+                <option value="Volleyball">Volleyball</option>
               </select>
             </div>
             <div class="form-group"><input type="email" id="regEmail" class="form-control" placeholder="Email Address"></div>
@@ -132,6 +141,16 @@
             <div class="text-center">
               <small>Already registered? <a href="#" onclick="toggleRegister(false)" class="text-danger">Login here</a></small>
             </div>
+          </div>
+
+          <div id="reapplyArea" style="display: none;" class="text-center mt-3">
+             <div class="alert alert-danger" id="rejectionMessage">
+                The admin has rejected you.
+             </div>
+             <button class="btn btn-outline-light btn-sm" onclick="handleReapply()">Try applying again</button>
+             <div class="mt-2">
+                <a href="#" onclick="resetLogin()" class="text-white-50 small">Back to Login</a>
+             </div>
           </div>
         </div>
 
@@ -153,11 +172,16 @@
   <script src="js/jquery-3.3.1.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script>
-    const API = window.location.origin;
-
     function toggleRegister(show) {
       document.getElementById('userLoginForm').style.display = show ? 'none' : 'block';
       document.getElementById('userRegisterForm').style.display = show ? 'block' : 'none';
+      document.getElementById('reapplyArea').style.display = 'none';
+    }
+
+    function resetLogin() {
+        document.getElementById('userLoginForm').style.display = 'block';
+        document.getElementById('userRegisterForm').style.display = 'none';
+        document.getElementById('reapplyArea').style.display = 'none';
     }
 
     async function handleLogin(isAdmin) {
@@ -165,7 +189,7 @@
       const pwd = isAdmin ? document.getElementById('adminPassword').value : document.getElementById('userPassword').value;
 
       try {
-        const res = await fetch(API + "/login", {
+        const res = await fetch("/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: email, password: pwd })
@@ -177,12 +201,12 @@
           localStorage.setItem("is_admin", data.is_admin);
           localStorage.setItem("user_name", data.name);
           localStorage.setItem("user_sport", data.sport);
-
-          if (data.is_admin) {
-            window.location.href = "index.html"; // Admin goes to main dashboard
-          } else {
-            window.location.href = "user.html"; // Player goes to dedicated user dashboard
-          }
+          window.location.href = "index.html"; 
+        } else if (res.status === 403) {
+          localStorage.setItem("pending_user_id", data.id);
+          document.getElementById('userLoginForm').style.display = 'none';
+          document.getElementById('reapplyArea').style.display = 'block';
+          document.getElementById('rejectionMessage').innerText = data.detail;
         } else {
           alert("Login failed: " + (data.detail || "Invalid credentials"));
         }
@@ -191,11 +215,31 @@
       }
     }
 
+    async function handleReapply() {
+      const userId = localStorage.getItem("pending_user_id");
+      if (!userId) return alert("User ID not found.");
+      
+      try {
+        const res = await fetch(`/users/${userId}/reapply`, { method: "POST" });
+        if (res.ok) {
+          alert("Re-application request sent. Please wait for admin approval.");
+          resetLogin();
+        } else {
+          const data = await res.json();
+          alert("Failed to reapply: " + data.detail);
+        }
+      } catch (err) {
+        alert("Error connecting to server.");
+      }
+    }
+
     async function handleRegister() {
+      const dob = document.getElementById('regDob').value;
+      if (!dob) return alert("Please specify Date of Birth");
+
       const payload = {
         name: document.getElementById('regName').value,
-        age: parseInt(document.getElementById('regAge').value),
-        dob: document.getElementById('regDob').value,
+        dob: dob,
         sport: document.getElementById('regSport').value,
         email: document.getElementById('regEmail').value,
         password: document.getElementById('regPassword').value,
@@ -203,14 +247,14 @@
       };
 
       try {
-        const res = await fetch(API + "/register", {
+        const res = await fetch("/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
         const data = await res.json();
         if (res.ok) {
-          alert("Registration successful. Please login.");
+          alert("Registration successful. Your request has been sent to the admin for approval.");
           toggleRegister(false);
           document.getElementById('userEmail').value = payload.email;
         } else {
